@@ -6,17 +6,20 @@
   The program runs its installer screen when its file name contains "setup", so the setup file is simply the
   single-file, self-contained build renamed. It runs on any 64-bit Windows 10/11 PC without .NET or admin rights.
 
-  Output: %LOCALAPPDATA%\PaxCommander\installer\paxcomm-setup.exe (plus a .sha256 beside it).
+  Output: %LOCALAPPDATA%\PaxCommander\installer\paxcomm-setup.exe (plus a .sha256 beside it), or -OutDir.
 
 .PARAMETER Version
   Optional version stamp (e.g. 1.2.0). Defaults to the <Version> in PaxCommander.csproj.
+
+.PARAMETER OutDir
+  Optional output folder. Defaults to %LOCALAPPDATA%\PaxCommander\installer.
 #>
-param([string]$Version)
+param([string]$Version, [string]$OutDir)
 
 $ErrorActionPreference = 'Stop'
 $project = Join-Path $PSScriptRoot '..\PaxCommander.csproj' | Resolve-Path
 $stage = Join-Path $env:TEMP 'paxcomm-setup-build'
-$outDir = Join-Path $env:LOCALAPPDATA 'PaxCommander\installer'
+$outDir = if ($OutDir) { $OutDir } else { Join-Path $env:LOCALAPPDATA 'PaxCommander\installer' }
 $out = Join-Path $outDir 'paxcomm-setup.exe'
 
 if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
