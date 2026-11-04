@@ -1,0 +1,48 @@
+# PAX Commander changelog
+
+Internal log of what each version added. Not shown in the app yet.
+Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
+
+## 1.2.0 (2026-11-02)
+- Themes: Dark (the original), Light, or Match Windows (follows Windows' light/dark setting live). Switch in
+  Settings ▸ Look, or with Ctrl+Alt+L / the "Light / dark theme" command. Everything recolors instantly: panes,
+  lists, menus, tooltips, dialogs, previews, the terminal, and code colors (VS Code's light set in Light).
+- New "Arctic" app icon: ice-white folder, blue rim and sheet, "PAX_" in bright-over-deep blue. The icon no
+  longer follows the accent color.
+- Terminal header: the Windows Terminal button is shorter and the title shortens itself in narrow panes, so nothing
+  overlaps.
+
+## 1.1.0 (2026-11-02)
+- Terminal suggestions while typing: saved snippets first, then commands you've run before (most used and most
+  recent first), then common admin commands for whatever you're connected to (Exchange Online, Graph, Teams,
+  SharePoint, Security & Compliance, Azure, PowerShell, Linux). Arrow keys pick; Tab or Enter fills the line
+  (it isn't run) and selects the first `<placeholder>`.
+- Terminal **Commands** menu: browse the library by service, save the typed line as a snippet, remove snippets,
+  clear remembered commands. Commands that look like they carry a password are never remembered.
+- Full-size terminal: ⤢ in the terminal header or Ctrl+Shift+` gives it the whole tab, and the same again restores it.
+- Auto-preview covers everything it can show: video, audio, PDF and Office documents, archives, and every kind of text
+  (.txt, .log, .gitignore and other dot files, configs, code). Not folders, programs or unknown binaries.
+- Colored previews for .gitignore, .gitattributes, .dockerignore, .npmrc, .gitmodules and similar dot files.
+- Network: a NETWORK section in the sidebar. **Network** lists computers on the local network (same discovery as
+  Explorer). Opening a computer lists its shared folders (admin shares hidden), with breadcrumbs Network › server ›
+  share. Up goes share → computer → Network. You can type `network` or `\server`.
+- Map network drive: pick a letter and a `\server\share`, choose whether to reconnect at sign-in, and optionally use
+  a different account (optionally remembered in Windows Credential Manager). Mapped drives can be disconnected from
+  the sidebar or This PC; shared folders get "Map network drive…" in their menu.
+- Fix: non-English characters (ü, ✓, 日本) typed into the PowerShell terminal no longer get garbled.
+
+## 1.0.0 (2026-11-02)
+- Dual-pane file manager (side by side or stacked) with tabs, Details / Columns / Thumbnails views, natural sort,
+  live folder watching, folder sizes, git status, labels, frecency (Frequent), favorites, batch rename, Quick Look,
+  a command palette (Ctrl+K), and undo/redo for file operations.
+- Background file-operation queue with conflict handling, Recycle Bin, and Windows shell context menus and icons.
+- Mounted ISO/VHD detection and unmounting; drive list or compact drive tiles in the sidebar.
+- Accent color picker (baby blue by default); custom title bar; the "PAX_" folder icon.
+- FTP, FTPS and SFTP connections with saved logins in Windows Credential Manager, host key and certificate checks,
+  and transfers between this PC and servers or between servers.
+- Docked terminal per tab: SSH on servers, PowerShell on this PC. The terminal and the file view follow each
+  other's folder. Windows commands work over SSH and Linux-style commands work in PowerShell.
+- Microsoft 365 admin PowerShell connections (Exchange Online, Graph, Teams, SharePoint, Security & Compliance,
+  Azure) with browser, device-code, certificate or saved-password sign-in, and a "Sign-in code" link button.
+- Code previews colored by language with line numbers; minified JSON and XML are laid out. Auto-preview mode.
+- Installer: paxcomm-setup.exe (self-contained, per-user, no admin needed), with silent install and uninstall.

@@ -1,0 +1,417 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="PaxCommander.App"
+             RequestedThemeVariant="Dark">
+
+  <Application.Resources>
+    <!-- Accent defaults (baby blue). AccentTheme.Apply rewrites every accent key at start-up and when the user picks a colour. -->
+    <Color x:Key="SystemAccentColor">#89CFF0</Color>
+    <Color x:Key="SystemAccentColorLight1">#A6DCF4</Color>
+    <Color x:Key="SystemAccentColorLight2">#C2E8F8</Color>
+    <Color x:Key="SystemAccentColorLight3">#DFF3FB</Color>
+    <Color x:Key="SystemAccentColorDark1">#5DBAE8</Color>
+    <Color x:Key="SystemAccentColorDark2">#2FA4DE</Color>
+    <Color x:Key="SystemAccentColorDark3">#1B83B8</Color>
+    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="#021620" />
+    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" Color="#021620" />
+    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" Color="#021620" />
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOn" Color="#021620" />
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPointerOver" Color="#021620" />
+
+    <Color x:Key="Bg">#0E1015</Color>
+    <Color x:Key="Surface">#161922</Color>
+    <Color x:Key="SurfaceRaised">#1D212C</Color>
+    <Color x:Key="Border">#272C39</Color>
+    <Color x:Key="Accent">#89CFF0</Color>
+    <Color x:Key="AccentHover">#B0E0F6</Color>
+    <Color x:Key="AccentPressed">#5DBAE8</Color>
+    <SolidColorBrush x:Key="BgBrush" Color="{StaticResource Bg}" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource Surface}" />
+    <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="{StaticResource SurfaceRaised}" />
+    <SolidColorBrush x:Key="BorderBrush2" Color="{StaticResource Border}" />
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHover}" />
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentPressed}" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#021620" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#23313C" />
+    <SolidColorBrush x:Key="AccentFaintBrush" Color="#1C2730" />
+    <SolidColorBrush x:Key="PaneActiveBorderBrush" Color="#425F70" />
+    <SolidColorBrush x:Key="FocusBorderBrush" Color="#89CFF0" />
+    <SolidColorBrush x:Key="TextBrush" Color="#E8EAF0" />
+    <SolidColorBrush x:Key="MutedBrush" Color="#8A92A6" />
+    <SolidColorBrush x:Key="FaintBrush" Color="#5B6274" />
+    <SolidColorBrush x:Key="GoodBrush" Color="#19F58C" />
+    <SolidColorBrush x:Key="WarnBrush" Color="#F5B14C" />
+    <SolidColorBrush x:Key="BadBrush" Color="#F2666A" />
+    <SolidColorBrush x:Key="InfoBrush" Color="#00C8FF" />
+    <LinearGradientBrush x:Key="WindowBgBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+      <GradientStop Color="#0D1117" Offset="0" />
+      <GradientStop Color="#0B0F14" Offset="0.55" />
+      <GradientStop Color="#091315" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="NeonTextBrush" StartPoint="0%,0%" EndPoint="100%,0%">
+      <GradientStop Color="#9AA4F5" Offset="0" />
+      <GradientStop Color="#89CFF0" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="NeonBarBrush" StartPoint="0%,0%" EndPoint="100%,0%">
+      <GradientStop Color="#9AA4F5" Offset="0" />
+      <GradientStop Color="#89CFF0" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Menus and flyouts: raised dark surface with a hairline border -->
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="#171B24" />
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="#2A3040" />
+    <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPointerOver" Color="#1F2A33" />
+    <SolidColorBrush x:Key="MenuFlyoutItemForegroundPointerOver" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="MenuFlyoutSubItemBackgroundPointerOver" Color="#1F2A33" />
+    <SolidColorBrush x:Key="MenuFlyoutSubItemBackgroundSubMenuOpened" Color="#1F2A33" />
+    <SolidColorBrush x:Key="MenuFlyoutItemKeyboardAcceleratorTextForeground" Color="#6F778A" />
+    <SolidColorBrush x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver" Color="#9AA3B6" />
+    <SolidColorBrush x:Key="ToolTipBackground" Color="#1B202A" />
+    <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#2E3647" />
+    <SolidColorBrush x:Key="ToolTipForeground" Color="#E8EAF0" />
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+
+    <Style Selector="Window">
+      <Setter Property="Background" Value="{DynamicResource WindowBgBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style Selector="TextBlock.muted">
+      <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+    </Style>
+    <Style Selector="TextBlock.faint">
+      <Setter Property="Foreground" Value="{DynamicResource FaintBrush}" />
+    </Style>
+    <Style Selector="TextBlock.label">
+      <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="LetterSpacing" Value="0.8" />
+    </Style>
+    <Style Selector="TextBlock.h1">
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.neon">
+      <Setter Property="Foreground" Value="{DynamicResource NeonTextBrush}" />
+      <Setter Property="Effect" Value="{DynamicResource NeonGlowEffect}" />
+    </Style>
+
+    <!-- Cards (dialogs, palette) -->
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="{DynamicResource CardBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="18" />
+      <Setter Property="BoxShadow" Value="{DynamicResource CardShadow}" />
+    </Style>
+
+    <!-- Panes: the active one carries a faint neon edge -->
+    <Style Selector="Border.pane">
+      <Setter Property="Background" Value="{DynamicResource PaneBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PaneBorderBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="ClipToBounds" Value="True" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="BorderBrush" Duration="0:0:0.18" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Border.pane.active">
+      <Setter Property="BorderBrush" Value="{DynamicResource PaneActiveBorderBrush}" />
+    </Style>
+
+    <Style Selector="TextBox">
+      <Setter Property="Background" Value="{DynamicResource BgBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush2}" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="MinHeight" Value="32" />
+    </Style>
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+      <Setter Property="BorderBrush" Value="{DynamicResource FocusBorderBrush}" />
+      <Setter Property="BoxShadow" Value="{DynamicResource FocusGlow}" />
+    </Style>
+    <Style Selector="TextBox.inline">
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Padding" Value="4,1" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Background" Value="{DynamicResource InputBrush}" />
+    </Style>
+    <Style Selector="TextBox.bare">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+    </Style>
+    <Style Selector="TextBox.bare:focus /template/ Border#PART_BorderElement, TextBox.bare:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="BoxShadow" Value="0 0 0 0 Transparent" />
+    </Style>
+
+    <!-- Buttons -->
+    <Style Selector="Button">
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="14,7" />
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="Background" Value="{DynamicResource SurfaceRaisedBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush2}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+    </Style>
+    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource ButtonHoverBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ButtonHoverBorderBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+    </Style>
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Button.primary /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="BoxShadow" Value="{DynamicResource AccentGlowSoft}" />
+    </Style>
+    <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+      <Setter Property="BoxShadow" Value="{DynamicResource AccentGlowStrong}" />
+    </Style>
+    <Style Selector="Button.danger">
+      <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource DangerBorderBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource DangerTextBrush}" />
+    </Style>
+    <Style Selector="Button.danger:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource DangerHoverBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BadBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource HoverTextBrush}" />
+    </Style>
+
+    <!-- Flat icon buttons used in toolbars -->
+    <Style Selector="Button.icon">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Width" Value="30" />
+      <Setter Property="Height" Value="30" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+    </Style>
+    <Style Selector="Button.icon:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource IconHoverBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+    </Style>
+    <Style Selector="Button.icon:disabled /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Opacity" Value="0.35" />
+    </Style>
+    <Style Selector="ToggleButton.icon">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Width" Value="30" />
+      <Setter Property="Height" Value="30" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+    </Style>
+    <Style Selector="ToggleButton.icon:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource IconHoverBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+    </Style>
+    <Style Selector="ToggleButton.icon:checked /template/ ContentPresenter#PART_ContentPresenter, ToggleButton.icon:checked:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+    </Style>
+
+    <!-- Segmented control for view modes -->
+    <Style Selector="ToggleButton.seg">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Width" Value="28" />
+      <Setter Property="Height" Value="24" />
+      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+    </Style>
+    <Style Selector="ToggleButton.seg:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource SegHoverBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+    </Style>
+    <Style Selector="ToggleButton.seg:checked /template/ ContentPresenter#PART_ContentPresenter, ToggleButton.seg:checked:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+      <Setter Property="BoxShadow" Value="{DynamicResource AccentGlowSoft}" />
+    </Style>
+
+    <!-- Sidebar entries -->
+    <Style Selector="Button.side">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Padding" Value="8,4" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+    </Style>
+    <Style Selector="Button.side:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource SideHoverBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.side.current /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource AccentFaintBrush}" />
+    </Style>
+    <Style Selector="Button.side.droptarget /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+    </Style>
+
+    <!-- Window caption buttons (our own title bar) -->
+    <Style Selector="Button.caption">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="Button.caption:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource CaptionHoverBrush}" />
+    </Style>
+    <Style Selector="Button.caption.close:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#C42B1C" />
+    </Style>
+    <Style Selector="Button.caption:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource CaptionPressedBrush}" />
+    </Style>
+    <Style Selector="Button.caption.close:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#A32417" />
+    </Style>
+
+    <!-- Drive tiles keep their frame; hover and the current drive light it up -->
+    <Style Selector="Button.side.drivetile:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource SideHoverBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource TileHoverBorderBrush}" />
+    </Style>
+    <Style Selector="Button.side.drivetile.current /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+    </Style>
+
+    <!-- Breadcrumb segments -->
+    <Style Selector="Button.crumb">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Padding" Value="6,2" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Height" Value="24" />
+      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="Foreground" Value="{DynamicResource CrumbTextBrush}" />
+    </Style>
+    <Style Selector="Button.crumb:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource CrumbHoverBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource HoverTextBrush}" />
+    </Style>
+    <Style Selector="Button.crumb.last">
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Button.crumb.droptarget /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+    </Style>
+    <Style Selector="Button.chev">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Width" Value="16" />
+      <Setter Property="Height" Value="24" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Foreground" Value="{DynamicResource FaintBrush}" />
+    </Style>
+    <Style Selector="Button.chev:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource CrumbHoverBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+    </Style>
+
+    <!-- Tabs -->
+    <Style Selector="Border.tab">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="Padding" Value="9,0,4,0" />
+      <Setter Property="Height" Value="28" />
+      <Setter Property="Margin" Value="0,0,3,0" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Border.tab:pointerover">
+      <Setter Property="Background" Value="{DynamicResource TabHoverBrush}" />
+    </Style>
+    <Style Selector="Border.tab.selected">
+      <Setter Property="Background" Value="{DynamicResource TabSelectedBrush}" />
+    </Style>
+    <Style Selector="Border.tab.droptarget">
+      <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+    </Style>
+
+    <Style Selector="ProgressBar">
+      <Setter Property="Foreground" Value="{DynamicResource NeonBarBrush}" />
+      <Setter Property="Background" Value="{DynamicResource TrackBrush}" />
+      <Setter Property="MinHeight" Value="4" />
+      <Setter Property="Height" Value="4" />
+      <Setter Property="CornerRadius" Value="2" />
+    </Style>
+
+    <Style Selector="ScrollViewer">
+      <Setter Property="AllowAutoHide" Value="True" />
+    </Style>
+
+    <Style Selector="MenuItem">
+      <Setter Property="Padding" Value="10,6" />
+    </Style>
+    <Style Selector="ContextMenu">
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="4" />
+    </Style>
+    <Style Selector="MenuFlyoutPresenter">
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="4" />
+    </Style>
+
+    <Style Selector="GridSplitter">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="MinWidth" Value="6" />
+    </Style>
+
+    <Style Selector="ListBox.palette">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBox.palette ListBoxItem">
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="Margin" Value="0,1" />
+    </Style>
+    <Style Selector="ListBox.palette ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+    </Style>
+    <Style Selector="ListBox.palette ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource SegCheckedBrush}" />
+    </Style>
+  </Application.Styles>
+</Application>

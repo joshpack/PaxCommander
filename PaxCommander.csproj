@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>PaxCommander</RootNamespace>
+    <AssemblyName>PaxCommander</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\PaxCommander.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <Version>1.2.0</Version>
+    <!-- The Windows shell parts are guarded at runtime; the analyzer can't see those guards. -->
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageReference Include="FluentFTP" Version="55.1.0" />
+    <PackageReference Include="SSH.NET" Version="2026.0.0" />
+  </ItemGroup>
+
+  <!-- Native graphics libs ship large debug symbols; keep the install lean. -->
+  <Target Name="TrimPublish" AfterTargets="Publish" Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+    <ItemGroup>
+      <_PruneFiles Include="$(PublishDir)*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(_PruneFiles)" />
+  </Target>
+
+</Project>
