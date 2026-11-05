@@ -3,6 +3,11 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.3.4 (2026-11-05)
+- Slim scrollbars: a thin rounded thumb that stays the same width instead of widening over the list (and covering
+  the Size column) when the pointer comes near. It brightens on hover or drag; clicking the track still pages.
+  Colors follow the light and dark themes.
+
 ## 1.3.3 (2026-11-05)
 - Multi-line commands in the terminal: pasted scripts keep their lines (the input grows to about ten lines, then
   scrolls), Shift+Enter starts another line, and Enter runs the whole thing as one piece. PowerShell gets it as a

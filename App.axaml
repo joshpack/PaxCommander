@@ -70,6 +70,73 @@
     <SolidColorBrush x:Key="ToolTipBackground" Color="#1B202A" />
     <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#2E3647" />
     <SolidColorBrush x:Key="ToolTipForeground" Color="#E8EAF0" />
+
+    <!-- Scrollbars: a slim rounded thumb that never widens over the content (Fluent's grows on hover and covers
+         columns). The thumb brightens when hovered or dragged; clicking the track still pages up/down. -->
+    <ControlTheme x:Key="SlimThumb" TargetType="Thumb">
+      <Setter Property="Background" Value="{DynamicResource ScrollThumbBrush}" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" CornerRadius="3" />
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ScrollThumbHoverBrush}" />
+      </Style>
+      <Style Selector="^:pressed">
+        <Setter Property="Background" Value="{DynamicResource ScrollThumbHoverBrush}" />
+      </Style>
+    </ControlTheme>
+    <ControlTheme x:Key="SlimPage" TargetType="RepeatButton">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Focusable" Value="False" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" />
+        </ControlTemplate>
+      </Setter>
+    </ControlTheme>
+    <ControlTheme x:Key="{x:Type ScrollBar}" TargetType="ScrollBar">
+      <Setter Property="Cursor" Value="Arrow" />
+      <Style Selector="^:vertical">
+        <Setter Property="Width" Value="10" />
+        <Setter Property="Template">
+          <ControlTemplate>
+            <Track Name="PART_Track" Orientation="Vertical" IsDirectionReversed="True" Margin="2,2"
+                   Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}"
+                   Value="{TemplateBinding Value, Mode=TwoWay}" ViewportSize="{TemplateBinding ViewportSize}"
+                   DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}">
+              <Track.DecreaseButton>
+                <RepeatButton Name="PART_PageUpButton" Theme="{StaticResource SlimPage}" />
+              </Track.DecreaseButton>
+              <Track.IncreaseButton>
+                <RepeatButton Name="PART_PageDownButton" Theme="{StaticResource SlimPage}" />
+              </Track.IncreaseButton>
+              <Thumb Name="thumb" Theme="{StaticResource SlimThumb}" MinHeight="24" />
+            </Track>
+          </ControlTemplate>
+        </Setter>
+      </Style>
+      <Style Selector="^:horizontal">
+        <Setter Property="Height" Value="10" />
+        <Setter Property="Template">
+          <ControlTemplate>
+            <Track Name="PART_Track" Orientation="Horizontal" Margin="2,2"
+                   Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}"
+                   Value="{TemplateBinding Value, Mode=TwoWay}" ViewportSize="{TemplateBinding ViewportSize}"
+                   DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}">
+              <Track.DecreaseButton>
+                <RepeatButton Name="PART_PageUpButton" Theme="{StaticResource SlimPage}" />
+              </Track.DecreaseButton>
+              <Track.IncreaseButton>
+                <RepeatButton Name="PART_PageDownButton" Theme="{StaticResource SlimPage}" />
+              </Track.IncreaseButton>
+              <Thumb Name="thumb" Theme="{StaticResource SlimThumb}" MinWidth="24" />
+            </Track>
+          </ControlTemplate>
+        </Setter>
+      </Style>
+    </ControlTheme>
   </Application.Resources>
 
   <Application.Styles>
