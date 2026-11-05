@@ -144,6 +144,8 @@ public sealed partial class TerminalPane : UserControl, IDisposable
     /// <summary>Which shell this is: the connection id, or "local".</summary>
     public string ShellKey => _spec.Key;
     public bool IsLocal => _spec.Local;
+    /// <summary>What this terminal is, e.g. "PowerShell  this PC" or "SSH  me@server".</summary>
+    public string TitleText => _spec.Title;
     /// <summary>The shell's current folder, as last reported.</summary>
     public string Cwd { get; private set; }
     /// <summary>At a prompt, with nothing typed: safe to send a cd for the file view.</summary>

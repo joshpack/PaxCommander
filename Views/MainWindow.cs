@@ -46,7 +46,8 @@ public sealed partial class MainWindow : Window, IAppHost
         MinWidth = 760;
         MinHeight = 480;
         var s = AppSettings.Current;
-        if (_primary) ApplyPlacement(s.Window);
+        // The first window comes back where it was left (kept up to date as it moves, so it survives any exit).
+        if (_primary) WindowChrome.RememberPlacement(this, () => AppSettings.Current.Window, p => AppSettings.Current.Window = p);
         else
         {
             Width = 1200;
@@ -105,20 +106,7 @@ public sealed partial class MainWindow : Window, IAppHost
 
         // Our own title bar: the system one is gone, this row is the caption. Empty space drags the window (with snap),
         // double-click maximizes, and the caption buttons sit at the far right.
-        ExtendClientAreaToDecorationsHint = true;
-        WindowDecorations = WindowDecorations.BorderOnly;
-        _maxButton = CaptionButton(MaximizeGlyph, "Maximize", WindowDecorationsElementRole.MaximizeButton, ToggleMaximized);
-        var caption = new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            VerticalAlignment = VerticalAlignment.Top,
-            Children =
-            {
-                CaptionButton("M0,5.5 L10,5.5", "Minimize", WindowDecorationsElementRole.MinimizeButton, () => WindowState = WindowState.Minimized),
-                _maxButton,
-                CaptionButton("M0,0 L10,10 M10,0 L0,10", "Close", WindowDecorationsElementRole.CloseButton, Close, close: true),
-            },
-        };
+        var caption = WindowChrome.CaptionButtons(this);
         var top = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto,Auto"), Height = 48, Background = Brushes.Transparent };
         top.Children.Add(brand);
         Grid.SetColumn(anywhere, 1);
@@ -127,23 +115,7 @@ public sealed partial class MainWindow : Window, IAppHost
         top.Children.Add(right);
         Grid.SetColumn(caption, 3);
         top.Children.Add(caption);
-        top.PointerPressed += (_, e) =>
-        {
-            if (!e.GetCurrentPoint(top).Properties.IsLeftButtonPressed) return;
-            if (e.Source is Visual v && v.FindAncestorOfType<Button>(includeSelf: true) is not null) return;
-            if (e.ClickCount == 2) ToggleMaximized();
-            else BeginMoveDrag(e);
-            e.Handled = true;
-        };
-        PropertyChanged += (_, e) =>
-        {
-            if (e.Property != WindowStateProperty) return;
-            var max = WindowState == WindowState.Maximized;
-            ((Avalonia.Controls.Shapes.Path)_maxButton.Content!).Data = Geometry.Parse(max ? RestoreGlyph : MaximizeGlyph);
-            ToolTip.SetTip(_maxButton, max ? "Restore" : "Maximize");
-            // A maximized borderless window hangs a few pixels off each screen edge; keep the content on screen.
-            Padding = max ? OffScreenMargin : default;
-        };
+        WindowChrome.MakeDraggable(this, top);
 
         // ---- Main area
         _main.ColumnDefinitions = new ColumnDefinitions($"{s.SidebarWidth},5,*,5,{s.PreviewWidth}");
@@ -256,37 +228,6 @@ public sealed partial class MainWindow : Window, IAppHost
         return b;
     }
 
-    private const string MaximizeGlyph = "M0.5,0.5 L9.5,0.5 L9.5,9.5 L0.5,9.5 Z";
-    private const string RestoreGlyph = "M2.5,0.5 L9.5,0.5 L9.5,7.5 M0.5,2.5 L7.5,2.5 L7.5,9.5 L0.5,9.5 Z";
-    private readonly Button _maxButton;
-
-    private void ToggleMaximized() =>
-        WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
-
-    /// <summary>
-    /// Minimize / maximize / close. The role lets Windows treat them as the real caption buttons (snap layouts on
-    /// hovering maximize); the click handler does the job wherever that isn't available.
-    /// </summary>
-    private static Button CaptionButton(string glyph, string tip, WindowDecorationsElementRole role, Action click, bool close = false)
-    {
-        var b = new Button
-        {
-            Content = new Avalonia.Controls.Shapes.Path { Data = Geometry.Parse(glyph), Width = 10, Height = 10, Stroke = Skin.Text, StrokeThickness = 1 },
-            Width = 46,
-            Height = 36,
-            Padding = new Thickness(0),
-            CornerRadius = new CornerRadius(0),
-            HorizontalContentAlignment = HorizontalAlignment.Center,
-            VerticalContentAlignment = VerticalAlignment.Center,
-        };
-        b.Classes.Add("caption");
-        if (close) b.Classes.Add("close");
-        ToolTip.SetTip(b, tip);
-        Avalonia.Controls.Chrome.WindowDecorationProperties.SetElementRole(b, role);
-        b.Click += (_, _) => click();
-        return b;
-    }
-
     private static Border Separator() => new() { Width = 1, Height = 18, Background = Skin.Separator, Margin = new Thickness(6, 0) };
 
     private static Button TopButton(string glyph, string tip, Action click)
@@ -307,19 +248,6 @@ public sealed partial class MainWindow : Window, IAppHost
         ToolTip.SetTip(b, tip);
         b.IsCheckedChanged += (_, _) => changed(b.IsChecked == true);
         return b;
-    }
-
-    private void ApplyPlacement(WindowPlacement p)
-    {
-        Width = Math.Max(MinWidth, p.Width);
-        Height = Math.Max(MinHeight, p.Height);
-        if (p.X != 0 || p.Y != 0)
-        {
-            WindowStartupLocation = WindowStartupLocation.Manual;
-            Position = new PixelPoint(p.X, p.Y);
-        }
-        else WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        if (p.Maximized) WindowState = WindowState.Maximized;
     }
 
     private PaneView MakePane(int index)
@@ -562,14 +490,6 @@ public sealed partial class MainWindow : Window, IAppHost
         };
         if (closing)
         {
-            s.Window = new WindowPlacement
-            {
-                X = WindowState == WindowState.Normal ? Position.X : s.Window.X,
-                Y = WindowState == WindowState.Normal ? Position.Y : s.Window.Y,
-                Width = WindowState == WindowState.Normal ? Width : s.Window.Width,
-                Height = WindowState == WindowState.Normal ? Height : s.Window.Height,
-                Maximized = WindowState == WindowState.Maximized,
-            };
             SaveColumnWidths();
             foreach (var p in _panes)
                 foreach (var t in p.Tabs) t.Dispose();

@@ -87,6 +87,8 @@ public sealed class AppSettings
     public double PreviewWidth { get; set; } = 340;
     public double OpsHeight { get; set; } = 140;
     public WindowPlacement Window { get; set; } = new();
+    /// <summary>Where popped-out terminal windows open (size, position, maximized), as last left.</summary>
+    public WindowPlacement? TerminalWindow { get; set; }
     public SessionSnapshot? Session { get; set; }
 
     private static readonly JsonSerializerOptions Json = new()

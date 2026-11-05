@@ -3,6 +3,13 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.3.1 (2026-11-05)
+- Windows reopen where you left them: the main window and popped-out terminals remember their size, position and
+  maximized state. It's saved as you move or resize (not only on a clean exit), and a position that's no longer on
+  any screen (monitor unplugged) falls back to centred.
+- Popped-out terminals use the app's own title bar: the PAX Commander mark, what the terminal is and its folder, and
+  the same minimize / maximize / close buttons (drag empty space to move, double-click to maximize).
+
 ## 1.3.0 (2026-11-05)
 - Pop-out terminal: the new button in the terminal header moves the same live session into its own window (a
   running command keeps going, history stays). Popped out, it is independent of the main window: browsing there

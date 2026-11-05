@@ -1025,7 +1025,7 @@ public sealed class FolderView : UserControl, IItemViewHost
         pane.PopOutRequested += TogglePopOut;
         pane.FolderReported += (folder, changed) =>
         {
-            if (_terminalWindow is not null && _terminal == pane) _terminalWindow.Title = $"{place.Spec.Title.Replace("  ", " · ")} — {folder}";
+            if (_terminalWindow is not null && _terminal == pane) _terminalWindow.SetWhere(place.Spec.Title, folder);
             // Popped out, the terminal is on its own: it neither follows the window nor drags the window along.
             if (_terminalWindow is not null) return;
             if (_terminal != pane || PlaceFor(CurrentPath) is not { } cur || cur.Spec.Key != place.Spec.Key) return;
@@ -1067,10 +1067,11 @@ public sealed class FolderView : UserControl, IItemViewHost
 
     // ---- Pop-out: the same live terminal (same shell, history, folder sync) moved into its own window ----
 
-    private Window? _terminalWindow;
+    private TerminalWindow? _terminalWindow;
     private bool _closingTerminalWindow;
 
     public bool IsTerminalPoppedOut => _terminalWindow is not null;
+    public TerminalWindow? PoppedOutTerminal => _terminalWindow;
 
     /// <summary>
     /// Moves the terminal into its own window, or back into the tab. Nothing restarts: it's the same control and the
@@ -1093,17 +1094,7 @@ public sealed class FolderView : UserControl, IItemViewHost
         _terminalSplitter.IsVisible = false;
 
         var owner = TopLevel.GetTopLevel(this) as Window;
-        var window = new Window
-        {
-            Title = $"Terminal — {pane.Cwd}",
-            Icon = AppIcon.CreateWindowIcon(),
-            Width = Math.Max(640, (owner?.Bounds.Width ?? 1200) * 0.6),
-            Height = Math.Max(360, _terminalHeight + 140),
-            MinWidth = 420,
-            MinHeight = 220,
-            Content = pane,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-        };
+        var window = new TerminalWindow(pane, pane.TitleText, pane.Cwd, owner);
         window.Closing += (_, e) =>
         {
             if (_closingTerminalWindow) return;
@@ -1123,7 +1114,7 @@ public sealed class FolderView : UserControl, IItemViewHost
     {
         if (_terminalWindow is not { } window) return;
         _terminalWindow = null;
-        window.Content = null;
+        window.Release();
         _closingTerminalWindow = true;
         window.Close();
         _closingTerminalWindow = false;
@@ -1144,7 +1135,7 @@ public sealed class FolderView : UserControl, IItemViewHost
         {
             // Ending the session from anywhere (×, toggle, leaving the server, closing the tab) closes its window too.
             _terminalWindow = null;
-            popped.Content = null;
+            popped.Release();
             _closingTerminalWindow = true;
             popped.Close();
             _closingTerminalWindow = false;
