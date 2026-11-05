@@ -3,6 +3,9 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.3.2 (2026-11-05)
+- Popped-out terminal windows are titled "PAX Terminal" (title bar and taskbar) instead of "PAX Commander".
+
 ## 1.3.1 (2026-11-05)
 - Windows reopen where you left them: the main window and popped-out terminals remember their size, position and
   maximized state. It's saved as you move or resize (not only on a clean exit), and a position that's no longer on
