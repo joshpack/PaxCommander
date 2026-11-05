@@ -92,8 +92,13 @@ public static class AppIcon
         Canvas.SetTop(label, 47);
         canvas.Children.Add(label);
 
+        // The folder is drawn on a 100×100 grid but only spans x 4.7–95.3, y 17.2–87.6. Frame just that (plus a hair
+        // of room) so it fills the icon edge to edge like Explorer's folder, instead of floating small in the middle.
+        Canvas.SetLeft(canvas, -3.5);
+        Canvas.SetTop(canvas, -16);
+        var frame = new Canvas { Width = 93, Height = 73, Children = { canvas } };
         var tile = new Grid { Width = size, Height = size };
-        tile.Children.Add(new Viewbox { Child = canvas, Stretch = Stretch.Uniform });
+        tile.Children.Add(new Viewbox { Child = frame, Stretch = Stretch.Uniform });
         return tile;
     }
 

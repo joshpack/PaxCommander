@@ -3,6 +3,13 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.2.1 (2026-11-05)
+- Bigger app icon: the Arctic folder now fills its frame edge to edge, like Explorer's own folder icon, so it is
+  as large in the taskbar, Start menu and title bar.
+- Add connection (the + beside CONNECTIONS) now says SSH outright: "SSH server (SFTP + terminal)…", "FTP / FTPS
+  server…" and "Microsoft 365 PowerShell…". The connection type list reads "SSH (SFTP)".
+- Map network drive moved into the NETWORK section's + menu; the sidebar list only shows Network itself.
+
 ## 1.2.0 (2026-11-02)
 - Themes: Dark (the original), Light, or Match Windows (follows Windows' light/dark setting live). Switch in
   Settings ▸ Look, or with Ctrl+Alt+L / the "Light / dark theme" command. Everything recolors instantly: panes,

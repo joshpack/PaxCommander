@@ -13,7 +13,7 @@ public static class ConnectionDialog
 {
     private static readonly (string Label, RemoteProtocol Protocol)[] Protocols =
     [
-        ("SFTP (SSH)", RemoteProtocol.Sftp),
+        ("SSH (SFTP)", RemoteProtocol.Sftp),
         ("FTPS (FTP over TLS)", RemoteProtocol.Ftps),
         ("FTP (unencrypted)", RemoteProtocol.Ftp),
     ];

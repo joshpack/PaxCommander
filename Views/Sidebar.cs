@@ -113,7 +113,7 @@ public sealed class Sidebar : UserControl
         // Saved SFTP/FTP servers, with a + to add one.
         var add = new Button { Content = Glyphs.Icon("plus", 12), Width = 22, Height = 20, CornerRadius = new CornerRadius(5) };
         add.Classes.Add("icon");
-        ToolTip.SetTip(add, "Add a connection: SFTP / FTP server or Microsoft 365 PowerShell");
+        ToolTip.SetTip(add, "Add a connection: SSH (SFTP), FTP / FTPS, or Microsoft 365 PowerShell");
         add.Click += (_, _) => NewConnectionMenu?.Invoke(add);
         var connHeader = new DockPanel { Margin = new Thickness(0, 6, 2, 0) };
         DockPanel.SetDock(add, Dock.Right);
@@ -180,21 +180,27 @@ public sealed class Sidebar : UserControl
             _root.Children.Add(b);
         }
 
-        // The local network: browse computers and their shares, and map a share to a drive letter (the + button).
+        // The local network: browse computers and their shares; the + maps a share to a drive letter.
         var mapButton = new Button { Content = Glyphs.Icon("plus", 12), Width = 22, Height = 20, CornerRadius = new CornerRadius(5) };
         mapButton.Classes.Add("icon");
-        ToolTip.SetTip(mapButton, "Map network drive…");
-        mapButton.Click += (_, _) => MapDrive?.Invoke(null);
+        ToolTip.SetTip(mapButton, "Map a network drive");
+        mapButton.Click += (_, _) =>
+        {
+            // Network actions live under the + (Map network drive), not as entries in the list.
+            var menu = new MenuFlyout();
+            var map = new MenuItem { Header = "Map network drive…", Icon = Glyphs.Icon("drive", 14) };
+            ToolTip.SetTip(map, @"Give a shared folder (\\server\share) its own drive letter");
+            map.Click += (_, _) => MapDrive?.Invoke(null);
+            menu.Items.Add(map);
+            menu.ShowAt(mapButton);
+        };
+
         var netHeader = new DockPanel { Margin = new Thickness(0, 6, 2, 0) };
         DockPanel.SetDock(mapButton, Dock.Right);
         netHeader.Children.Add(mapButton);
         netHeader.Children.Add(Header("NETWORK"));
         _root.Children.Add(netHeader);
         _root.Children.Add(Entry("Network", PathUtil.NetworkPath, "network", null, "Computers on your network, and the folders they share"));
-        var mapEntry = new Button { Classes = { "side" }, Content = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10, Children = { Glyphs.Icon("drive", 16), new TextBlock { Text = "Map network drive…", VerticalAlignment = VerticalAlignment.Center } } } };
-        ToolTip.SetTip(mapEntry, @"Give a shared folder (\\server\share) its own drive letter");
-        mapEntry.Click += (_, _) => MapDrive?.Invoke(null);
-        _root.Children.Add(mapEntry);
 
         var recent = Frecency.Ranked(40)
             .Select(r => r.Path)

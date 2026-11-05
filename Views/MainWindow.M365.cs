@@ -11,7 +11,8 @@ public sealed partial class MainWindow
     private void ShowNewConnectionMenu(Control anchor)
     {
         var menu = new ContextMenu { Placement = PlacementMode.Bottom };
-        menu.Items.Add(Item("SFTP / FTP server…", "network", () => _ = EditConnectionAsync(null)));
+        menu.Items.Add(Item("SSH server (SFTP + terminal)…", "terminal", () => _ = EditConnectionAsync(null, new Core.Remote.Connection { Protocol = Core.Remote.RemoteProtocol.Sftp })));
+        menu.Items.Add(Item("FTP / FTPS server…", "network", () => _ = EditConnectionAsync(null, new Core.Remote.Connection { Protocol = Core.Remote.RemoteProtocol.Ftps })));
         menu.Items.Add(Item("Microsoft 365 PowerShell…", "shield", () => _ = EditM365Async(null)));
         menu.Open(anchor);
     }
