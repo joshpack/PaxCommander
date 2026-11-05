@@ -3,6 +3,10 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.3.5 (2026-11-05)
+- Mapped network drives (the ones Windows/Explorer already has) are listed under NETWORK, below "Network", instead
+  of among the local drives; DRIVES keeps local, USB and disc drives. Both follow the list/tile setting.
+
 ## 1.3.4 (2026-11-05)
 - Slim scrollbars: a thin rounded thumb that stays the same width instead of widening over the list (and covering
   the Size column) when the pointer comes near. It brightens on hover or drag; clicking the track still pages.

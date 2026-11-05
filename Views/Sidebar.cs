@@ -106,9 +106,12 @@ public sealed class Sidebar : UserControl
         drivesHeader.Children.Add(layout);
         drivesHeader.Children.Add(Header("DRIVES"));
         _root.Children.Add(drivesHeader);
-        Panel drivesPanel = tiles ? new WrapPanel { Margin = new Thickness(4, 2, 0, 2), ItemSpacing = AppSettings.Current.CompactRows ? 4 : 6, LineSpacing = AppSettings.Current.CompactRows ? 4 : 6 } : new StackPanel { Spacing = 1 };
+        Panel NewDrivePanel() => tiles ? new WrapPanel { Margin = new Thickness(4, 2, 0, 2), ItemSpacing = AppSettings.Current.CompactRows ? 4 : 6, LineSpacing = AppSettings.Current.CompactRows ? 4 : 6 } : new StackPanel { Spacing = 1 };
+        var drivesPanel = NewDrivePanel();
+        // Mapped network drives are listed under NETWORK instead (filled by the same pass, placed further down).
+        var networkDrivesPanel = NewDrivePanel();
         _root.Children.Add(drivesPanel);
-        _ = FillDrivesAsync(drivesPanel, tiles);
+        _ = FillDrivesAsync(drivesPanel, networkDrivesPanel, tiles);
 
         // Saved SFTP/FTP servers, with a + to add one.
         var add = new Button { Content = Glyphs.Icon("plus", 12), Width = 22, Height = 20, CornerRadius = new CornerRadius(5) };
@@ -201,6 +204,7 @@ public sealed class Sidebar : UserControl
         netHeader.Children.Add(Header("NETWORK"));
         _root.Children.Add(netHeader);
         _root.Children.Add(Entry("Network", PathUtil.NetworkPath, "network", null, "Computers on your network, and the folders they share"));
+        _root.Children.Add(networkDrivesPanel);
 
         var recent = Frecency.Ranked(40)
             .Select(r => r.Path)
@@ -327,7 +331,9 @@ public sealed class Sidebar : UserControl
     /// Drive details come from a background thread: asking a disconnected network drive for its size can block for
     /// seconds, and the sidebar must never freeze the window.
     /// </summary>
-    private async Task FillDrivesAsync(Panel panel, bool tiles)
+    /// <param name="panel">Local, removable and disc drives (DRIVES).</param>
+    /// <param name="networkPanel">Mapped network drives, shown under NETWORK below "Network".</param>
+    private async Task FillDrivesAsync(Panel panel, Panel networkPanel, bool tiles)
     {
         var drives = DriveInfo.GetDrives();
         var lookups = drives.Select(d => Task.Run(() => FolderListing.DriveItem(d))).ToArray();
@@ -335,7 +341,8 @@ public sealed class Sidebar : UserControl
         for (var i = 0; i < drives.Length; i++)
         {
             var item = lookups[i].IsCompletedSuccessfully ? lookups[i].Result : null;
-            panel.Children.Add(tiles ? DriveTile(drives[i], item) : DriveEntry(drives[i], item));
+            var target = drives[i].DriveType == DriveType.Network ? networkPanel : panel;
+            target.Children.Add(tiles ? DriveTile(drives[i], item) : DriveEntry(drives[i], item));
         }
         SetCurrent(_current);
     }
