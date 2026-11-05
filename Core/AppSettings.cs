@@ -54,6 +54,8 @@ public sealed class AppSettings
     public bool ShowSidebar { get; set; } = true;
     /// <summary>Drives in the sidebar as compact squares (letter + fill) instead of full rows.</summary>
     public bool DriveTiles { get; set; }
+    /// <summary>Mapped network drives (under NETWORK) as tiles instead of rows; separate from DriveTiles.</summary>
+    public bool NetworkDriveTiles { get; set; }
     public ViewMode DefaultView { get; set; } = ViewMode.Details;
     public bool CompactRows { get; set; }
     /// <summary>Accent colour as #RRGGBB (see AccentTheme.Presets).</summary>

@@ -3,6 +3,10 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.3.6 (2026-11-05)
+- Mapped network drives get their own list/tiles button in the NETWORK header, separate from DRIVES, so each section
+  can be rows or squares on its own. The choice is remembered.
+
 ## 1.3.5 (2026-11-05)
 - Mapped network drives (the ones Windows/Explorer already has) are listed under NETWORK, below "Network", instead
   of among the local drives; DRIVES keeps local, USB and disc drives. Both follow the list/tile setting.
