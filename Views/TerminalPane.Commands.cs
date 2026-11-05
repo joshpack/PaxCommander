@@ -37,6 +37,13 @@ public sealed partial class TerminalPane
 
     private const string MaximizeGlyph = "M1,4 L1,1 L4,1 M8,1 L11,1 L11,4 M11,8 L11,11 L8,11 M4,11 L1,11 L1,8";
     private const string RestoreGlyph = "M4,1 L4,4 L1,4 M8,1 L8,4 L11,4 M11,8 L8,8 L8,11 M4,11 L4,8 L1,8";
+    // A box with an arrow leaving it (pop out) / entering it (dock back).
+    private const string PopOutGlyph = "M5,2 L1,2 L1,11 L10,11 L10,7 M7,1 L11,1 L11,5 M11,1 L5.5,6.5";
+    private const string DockGlyph = "M5,2 L1,2 L1,11 L10,11 L10,7 M11,1 L5.5,6.5 M5.5,2.5 L5.5,6.5 L9.5,6.5";
+    private Button _popOut = null!;
+
+    /// <summary>The pop-out button: move the terminal into its own window, or back into the tab.</summary>
+    public event Action? PopOutRequested;
 
     /// <summary>Builds the Commands / full-size header buttons and the suggestion popup (called from the constructor).</summary>
     private void InitCommands(StackPanel headerButtons, Control inputRow)
@@ -51,8 +58,13 @@ public sealed partial class TerminalPane
         _maximize.Classes.Add("icon");
         ToolTip.SetTip(_maximize, "Full size: give the terminal the whole tab (Ctrl+Shift+`)");
         _maximize.Click += (_, _) => MaximizeRequested?.Invoke();
+        _popOut = new Button { Content = CaptionPath(PopOutGlyph), Width = 26, Height = 24, Padding = new Thickness(0) };
+        _popOut.Classes.Add("icon");
+        ToolTip.SetTip(_popOut, "Pop out into its own window (the same session keeps running)");
+        _popOut.Click += (_, _) => PopOutRequested?.Invoke();
         headerButtons.Children.Insert(0, commands);
         headerButtons.Children.Insert(headerButtons.Children.Count - 1, _maximize);
+        headerButtons.Children.Insert(headerButtons.Children.Count - 1, _popOut);
 
         _suggestList = new ListBox
         {
@@ -90,6 +102,14 @@ public sealed partial class TerminalPane
 
     private static Control CaptionPath(string data) =>
         new Avalonia.Controls.Shapes.Path { Data = Geometry.Parse(data), Width = 12, Height = 12, Stroke = Skin.Muted, StrokeThickness = 1.4 };
+
+    /// <summary>Popped out into its own window: the button docks it back, and "full size" has no meaning there.</summary>
+    public void SetPoppedOut(bool poppedOut)
+    {
+        _popOut.Content = CaptionPath(poppedOut ? DockGlyph : PopOutGlyph);
+        ToolTip.SetTip(_popOut, poppedOut ? "Dock back into the tab" : "Pop out into its own window (the same session keeps running)");
+        _maximize.IsVisible = !poppedOut;
+    }
 
     public void SetMaximized(bool maximized)
     {

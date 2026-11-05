@@ -3,6 +3,14 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.3.0 (2026-11-05)
+- Pop-out terminal: the new button in the terminal header moves the same live session into its own window (a
+  running command keeps going, history stays). Popped out, it is independent of the main window: browsing there
+  neither moves it nor closes it, and its cd does not move the files. The button (or closing the window) docks it
+  back into the tab; × in its header ends the session.
+- App icon proportions match Explorer's folder: a little taller (100:88 instead of 93:73), so in the taskbar it's
+  the same visual size as File Explorer's icon rather than looking short.
+
 ## 1.2.1 (2026-11-05)
 - Bigger app icon: the Arctic folder now fills its frame edge to edge, like Explorer's own folder icon, so it is
   as large in the taskbar, Start menu and title bar.

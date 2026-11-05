@@ -97,8 +97,10 @@ public static class AppIcon
         Canvas.SetLeft(canvas, -3.5);
         Canvas.SetTop(canvas, -16);
         var frame = new Canvas { Width = 93, Height = 73, Children = { canvas } };
+        // Explorer's folder is close to square; ours is drawn wider (93:73). Stretch it a little taller (to 100:88) so
+        // it sits in the taskbar at the same visual size as Explorer's instead of looking short.
         var tile = new Grid { Width = size, Height = size };
-        tile.Children.Add(new Viewbox { Child = frame, Stretch = Stretch.Uniform });
+        tile.Children.Add(new Viewbox { Child = frame, Stretch = Stretch.Fill, Width = size, Height = size * 0.88, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center });
         return tile;
     }
 

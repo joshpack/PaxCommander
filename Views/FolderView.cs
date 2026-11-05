@@ -952,6 +952,12 @@ public sealed class FolderView : UserControl, IItemViewHost
     /// </summary>
     private void SyncTerminal()
     {
+        // A popped-out terminal is independent: browsing here neither moves it nor closes it.
+        if (_terminalWindow is not null)
+        {
+            StateChanged?.Invoke();
+            return;
+        }
         var here = PlaceFor(CurrentPath);
         if (_terminal is not null && _terminal.ShellKey != here?.Spec.Key) CloseTerminal(dismiss: false);
         if (here is null)
@@ -1012,9 +1018,16 @@ public sealed class FolderView : UserControl, IItemViewHost
                 catch (Exception ex) { Toasts.Show(ex.Message, ToastKind.Error); }
             };
         var pane = new TerminalPane(place.Spec, place.ShellFolder, external, () => CloseTerminal(dismiss: true));
-        pane.MaximizeRequested += ToggleTerminalMaximized;
+        pane.MaximizeRequested += () =>
+        {
+            if (_terminalWindow is null) ToggleTerminalMaximized();
+        };
+        pane.PopOutRequested += TogglePopOut;
         pane.FolderReported += (folder, changed) =>
         {
+            if (_terminalWindow is not null && _terminal == pane) _terminalWindow.Title = $"{place.Spec.Title.Replace("  ", " · ")} — {folder}";
+            // Popped out, the terminal is on its own: it neither follows the window nor drags the window along.
+            if (_terminalWindow is not null) return;
             if (_terminal != pane || PlaceFor(CurrentPath) is not { } cur || cur.Spec.Key != place.Spec.Key) return;
             var same = place.Spec.Local ? PathUtil.Same(cur.ShellFolder, folder) : cur.ShellFolder == folder;
             if (changed && !same) _ = NavigateAsync(place.ViewPath(folder));
@@ -1052,10 +1065,90 @@ public sealed class FolderView : UserControl, IItemViewHost
         _terminal.FocusInput();
     }
 
+    // ---- Pop-out: the same live terminal (same shell, history, folder sync) moved into its own window ----
+
+    private Window? _terminalWindow;
+    private bool _closingTerminalWindow;
+
+    public bool IsTerminalPoppedOut => _terminalWindow is not null;
+
+    /// <summary>
+    /// Moves the terminal into its own window, or back into the tab. Nothing restarts: it's the same control and the
+    /// same shell, so a running command keeps going and the files keep following its folder. Closing the window
+    /// docks it back rather than ending the session (× in the terminal header ends it).
+    /// </summary>
+    public void TogglePopOut()
+    {
+        if (_terminal is null) return;
+        if (_terminalWindow is not null)
+        {
+            DockTerminal();
+            return;
+        }
+        if (_terminalMaximized) ToggleTerminalMaximized();
+        if (_terminalHost.Bounds.Height > 60) _terminalHeight = _terminalHost.Bounds.Height;
+        var pane = _terminal;
+        _terminalHost.Child = null;
+        _terminalRow.Height = GridLength.Auto;
+        _terminalSplitter.IsVisible = false;
+
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        var window = new Window
+        {
+            Title = $"Terminal — {pane.Cwd}",
+            Icon = AppIcon.CreateWindowIcon(),
+            Width = Math.Max(640, (owner?.Bounds.Width ?? 1200) * 0.6),
+            Height = Math.Max(360, _terminalHeight + 140),
+            MinWidth = 420,
+            MinHeight = 220,
+            Content = pane,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+        };
+        window.Closing += (_, e) =>
+        {
+            if (_closingTerminalWindow) return;
+            // The window's own close button docks the terminal back instead of losing the session.
+            e.Cancel = true;
+            Dispatcher.UIThread.Post(DockTerminal);
+        };
+        _terminalWindow = window;
+        pane.SetPoppedOut(true);
+        if (owner is not null) window.Show(owner);
+        else window.Show();
+        Dispatcher.UIThread.Post(pane.FocusInput, DispatcherPriority.Background);
+        StateChanged?.Invoke();
+    }
+
+    private void DockTerminal()
+    {
+        if (_terminalWindow is not { } window) return;
+        _terminalWindow = null;
+        window.Content = null;
+        _closingTerminalWindow = true;
+        window.Close();
+        _closingTerminalWindow = false;
+        if (_terminal is not { } pane) return;
+        pane.SetPoppedOut(false);
+        _terminalHost.Child = pane;
+        _terminalRow.Height = new GridLength(_terminalHeight);
+        _terminalSplitter.IsVisible = true;
+        Dispatcher.UIThread.Post(pane.FocusInput, DispatcherPriority.Background);
+        StateChanged?.Invoke();
+    }
+
     private void CloseTerminal(bool dismiss)
     {
         if (_terminal is null) return;
         if (_terminalMaximized) ToggleTerminalMaximized();
+        if (_terminalWindow is { } popped)
+        {
+            // Ending the session from anywhere (×, toggle, leaving the server, closing the tab) closes its window too.
+            _terminalWindow = null;
+            popped.Content = null;
+            _closingTerminalWindow = true;
+            popped.Close();
+            _closingTerminalWindow = false;
+        }
         if (dismiss)
         {
             if (_terminal.IsLocal) _localTerminalWanted = false;
