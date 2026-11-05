@@ -3,6 +3,12 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.3.3 (2026-11-05)
+- Multi-line commands in the terminal: pasted scripts keep their lines (the input grows to about ten lines, then
+  scrolls), Shift+Enter starts another line, and Enter runs the whole thing as one piece. PowerShell gets it as a
+  single script (loops and braces across lines work); over SSH the lines go to the shell as typed. The terminal
+  shows the script's lines (PS> first, >> after). Up/Down move within a multi-line command instead of history.
+
 ## 1.3.2 (2026-11-05)
 - Popped-out terminal windows are titled "PAX Terminal" (title bar and taskbar) instead of "PAX Commander".
 

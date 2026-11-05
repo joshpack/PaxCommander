@@ -100,6 +100,13 @@ public sealed class LocalShell : IShellSession
         Write(Marker);
     }
 
+    /// <summary>A pasted script runs as one piece (loops and braces across lines intact), in the current scope.</summary>
+    public void SendBlock(string block)
+    {
+        Write("Invoke-Expression ([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" + Convert.ToBase64String(Encoding.UTF8.GetBytes(block)) + "')))");
+        Write(Marker);
+    }
+
     public void SendRaw(string text) => Write(text);
 
     public string CdCommand(string folder) => "Set-Location -LiteralPath '" + folder.Replace("'", "''") + "'";

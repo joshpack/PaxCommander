@@ -121,8 +121,13 @@ public sealed partial class TerminalPane : UserControl, IDisposable
             Background = Brushes.Transparent,
             BorderThickness = new Thickness(0),
             Padding = new Thickness(4, 6),
-            InnerLeftContent = new TextBlock { Text = "›", FontFamily = Skin.Mono, FontSize = 14, Foreground = Skin.Accent, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(10, 0, 0, 0) },
+            InnerLeftContent = new TextBlock { Text = "›", FontFamily = Skin.Mono, FontSize = 14, Foreground = Skin.Accent, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(10, 5, 0, 0) },
+            // Pasted scripts keep their lines; the box grows to about ten lines, then scrolls.
+            AcceptsReturn = true,
+            TextWrapping = TextWrapping.NoWrap,
+            MaxHeight = 200,
         };
+        ScrollViewer.SetVerticalScrollBarVisibility(_input, Avalonia.Controls.Primitives.ScrollBarVisibility.Auto);
         _input.AddHandler(KeyDownEvent, OnInputKey, RoutingStrategies.Tunnel);
 
         var inputRow = new Border { Child = _input, BorderBrush = Skin.PanelBorder, BorderThickness = new Thickness(0, 1, 0, 0) };
@@ -279,9 +284,15 @@ public sealed partial class TerminalPane : UserControl, IDisposable
         }
         switch (e.Key)
         {
+            // Shift+Enter starts another line (the box grows); Enter runs everything typed or pasted.
+            case Key.Enter when e.KeyModifiers.HasFlag(KeyModifiers.Shift):
+                break;
             case Key.Enter:
                 e.Handled = true;
                 Submit();
+                break;
+            // In a multi-line command the arrows move between its lines instead of through history.
+            case Key.Up or Key.Down when (_input.Text ?? "").Contains('\n'):
                 break;
             case Key.Up when _history.Count > 0:
                 e.Handled = true;
@@ -356,6 +367,12 @@ public sealed partial class TerminalPane : UserControl, IDisposable
         if (line.Trim().Length > 0 && (_history.Count == 0 || _history[^1] != line)) _history.Add(line);
         _historyAt = _history.Count;
         _suggestPopup.IsOpen = false;
+        line = line.Replace("\r\n", "\n").TrimEnd('\n');
+        if (line.Contains('\n'))
+        {
+            SubmitBlock(line);
+            return;
+        }
         var t = _spec.Translate(line);
         NoteCommand(line, remember: true);
         if (t.Command != line) NoteCommand(t.Command, remember: false);
@@ -370,6 +387,26 @@ public sealed partial class TerminalPane : UserControl, IDisposable
         if (t.Note is not null) Append($"# {t.Note}\n");
         IsIdle = false;
         _shell.SendLine(t.Command);
+    }
+
+    /// <summary>
+    /// A pasted (or Shift+Enter) multi-line command runs as one unit, exactly as written: a PowerShell script block
+    /// with its loops and braces intact, or a series of lines for the SSH shell. Windows/Linux translation only
+    /// applies to single lines.
+    /// </summary>
+    private void SubmitBlock(string block)
+    {
+        if (_shell is null) return;
+        if (block.Length <= 2000) NoteCommand(block, remember: true);
+        foreach (var l in block.Split('\n')) NoteCommand(l, remember: false);
+        if (_shell.NeedsLocalEcho)
+        {
+            var lines = block.Split('\n');
+            Append($"PS {Cwd}> {lines[0]}\n");
+            foreach (var l in lines.Skip(1)) Append($">> {l}\n");
+        }
+        IsIdle = false;
+        _shell.SendBlock(block);
     }
 
     // ---- Output ---------------------------------------------------------------------------------------------------------

@@ -62,6 +62,8 @@ public sealed class RemoteShell : IShellSession
     public void Start(string folder) => Send(SetupLine(folder));
     public void SendLine(string line) => Send(line + "\r");
     public void SendRaw(string text) => Send(text);
+    /// <summary>A pasted script: its lines, as if typed one after another (bash and zsh handle continuations).</summary>
+    public void SendBlock(string block) => Send(block.Replace("\n", "\r") + "\r");
     public string CdCommand(string folder) => " cd -- " + Quote(folder);
 
     public bool Interrupt()

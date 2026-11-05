@@ -15,6 +15,8 @@ public interface IShellSession : IDisposable
     void Start(string folder);
     /// <summary>Runs one line as typed.</summary>
     void SendLine(string line);
+    /// <summary>Runs a multi-line command (a pasted script) as one unit.</summary>
+    void SendBlock(string block);
     /// <summary>Sends raw keystrokes (Ctrl+C, a password answer).</summary>
     void SendRaw(string text);
     /// <summary>The command that moves the shell to <paramref name="folder"/> (sent when the file view moves).</summary>
