@@ -139,6 +139,7 @@ public sealed partial class MainWindow
             Add("Unmount a disc image (ISO)…", "eject", null, UnmountPicker);
         Add("Change the accent colour…", "palette", null, () => _ = SettingsView.ShowAsync(ApplySettings));
         Add("Settings", "settings", "Ctrl+OemComma", () => _ = SettingsView.ShowAsync(ApplySettings), true);
+        Add("Check for updates", "download", null, () => _ = UpdatePrompt.CheckNowAsync(this));
         Add("Keyboard shortcuts", "command", "F1", () => ShowGoAnywhere(">"), true);
     }
 

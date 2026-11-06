@@ -209,6 +209,7 @@ public sealed partial class MainWindow : Window, IAppHost
         BuildCommands();
         Closing += (_, _) => SaveSession(closing: true);
         Opened += (_, _) => Dispatcher.UIThread.Post(() => CurrentView?.FocusList(), DispatcherPriority.Background);
+        Opened += (_, _) => _ = UpdatePrompt.CheckOnStartAsync(this);
         Activated += (_, _) => _activePane.Current?.InvalidateRows();
         AccentTheme.Changed += OnAccentChanged;
         Closed += (_, _) => AccentTheme.Changed -= OnAccentChanged;

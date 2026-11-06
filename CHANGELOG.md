@@ -3,6 +3,14 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.3.8 (2026-11-05)
+- Self-update: once a day, a few seconds after start-up, PAX Commander checks GitHub's latest release. If there's a
+  newer version a card shows what's new with Update now / Later / Skip this version; nothing downloads until you
+  click Update now. The installer is checked against the release's .sha256 file (a mismatch is thrown away), then
+  an installed copy updates quietly in place, keeping your shortcut and folder-menu choices, and reopens. Portable
+  copies open the normal setup screen. "Check for updates" is in the command palette and the ⋯ menu; Settings >
+  Behaviour > "Check for updates" turns the daily check off. Copies before 1.3.8 can't update themselves.
+
 ## 1.3.7 (2026-11-05)
 - Favorite hearts: a faint hollow heart sits left of each folder's icon. Click it to add the folder to favorites (it
   turns red and shows up in the sidebar); click a red heart to remove it. Folders that are already favorites show red

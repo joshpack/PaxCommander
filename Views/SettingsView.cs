@@ -91,6 +91,7 @@ public static class SettingsView
                 Section("BEHAVIOUR"),
                 Toggle("Open items with a single click", null, s.SingleClickOpen, v => s.SingleClickOpen = v),
                 Toggle("Reopen my tabs at start", null, s.RestoreSession, v => s.RestoreSession = v),
+                Toggle("Check for updates", "Looks for a new version once a day and asks before installing it", s.CheckForUpdates, v => s.CheckForUpdates = v),
                 Row("Terminal command", "{path} is replaced by the folder", terminal),
                 new TextBlock
                 {

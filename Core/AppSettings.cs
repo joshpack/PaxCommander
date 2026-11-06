@@ -79,6 +79,11 @@ public sealed class AppSettings
     public bool SingleClickOpen { get; set; }
     public bool ConfirmRecycle { get; set; }
     public bool RestoreSession { get; set; } = true;
+    /// <summary>Look for a newer release on GitHub once a day (it only installs when you say so).</summary>
+    public bool CheckForUpdates { get; set; } = true;
+    public DateTime LastUpdateCheck { get; set; }
+    /// <summary>A version the user chose "Skip this version" for.</summary>
+    public string? SkippedUpdate { get; set; }
     /// <summary>Command for "Open terminal here"; empty = Windows Terminal, then PowerShell.</summary>
     public string TerminalCommand { get; set; } = "";
 

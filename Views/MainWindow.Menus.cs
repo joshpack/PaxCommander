@@ -375,6 +375,7 @@ public sealed partial class MainWindow
             else Try(() => Shell.OpenTerminal(view.ActiveFolder));
         }, enabled: !PathUtil.IsVirtual(view.ActiveFolder) && (!PathUtil.IsRemote(view.ActiveFolder) || view.CanShowTerminal)));
         menu.Items.Add(Item("Settings…", "settings", () => _ = SettingsView.ShowAsync(ApplySettings), "Ctrl+OemComma"));
+        menu.Items.Add(Item("Check for updates…", "download", () => _ = UpdatePrompt.CheckNowAsync(this)));
         menu.ShowAt(anchor);
     }
 

@@ -54,7 +54,20 @@ internal static class Program
             {
                 var at = Array.IndexOf(args, "--dir");
                 var folder = at >= 0 && at + 1 < args.Length ? args[at + 1] : Installer.InstalledFolder ?? Installer.DefaultFolder;
-                Installer.InstallAsync(folder, !args.Contains("--no-desktop"), !args.Contains("--no-folder-menu"), _ => { }).GetAwaiter().GetResult();
+                // An update started from the app: let that copy close first, then reopen the new one.
+                var wait = Array.IndexOf(args, "--wait-pid");
+                if (wait >= 0 && wait + 1 < args.Length && int.TryParse(args[wait + 1], out var pid)) Installer.WaitForExit(pid);
+                try
+                {
+                    var exe = Installer.InstallAsync(folder, !args.Contains("--no-desktop"), !args.Contains("--no-folder-menu"), _ => { }).GetAwaiter().GetResult();
+                    if (args.Contains("--relaunch")) Installer.Relaunch(exe);
+                }
+                catch (Exception ex)
+                {
+                    CrashLog.Write("quiet install", ex);
+                    // Don't leave the user with no app: reopen whatever is there.
+                    if (args.Contains("--relaunch")) Installer.Relaunch(Path.Combine(folder, "PaxCommander.exe"));
+                }
                 return;
             }
             if (Mode != StartMode.Normal)

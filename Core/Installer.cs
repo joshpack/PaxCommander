@@ -146,6 +146,43 @@ public static class Installer
         SHChangeNotify(0x08000000, 0, IntPtr.Zero, IntPtr.Zero);
     }
 
+    public static bool HasDesktopShortcut => File.Exists(DesktopShortcut);
+
+    public static bool HasFolderMenu
+    {
+        get
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(MenuKeys[0]);
+            return key is not null;
+        }
+    }
+
+    /// <summary>For updates: waits (up to 30 s) for the copy being replaced to close.</summary>
+    public static void WaitForExit(int pid)
+    {
+        try
+        {
+            using var p = Process.GetProcessById(pid);
+            p.WaitForExit(30000);
+        }
+        catch
+        {
+            // Already gone.
+        }
+    }
+
+    /// <summary>Opens the freshly installed app (after a quiet update).</summary>
+    public static void Relaunch(string exe)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(exe) { UseShellExecute = true, WorkingDirectory = Path.GetDirectoryName(exe)! });
+        }
+        catch
+        {
+        }
+    }
+
     private static void RemoveFolderMenu()
     {
         foreach (var path in MenuKeys) Registry.CurrentUser.DeleteSubKeyTree(path, throwOnMissingSubKey: false);
