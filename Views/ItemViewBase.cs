@@ -109,6 +109,8 @@ public abstract class ItemViewBase : UserControl
 
     /// <summary>The item under a point in this control's coordinates.</summary>
     protected abstract FileItem? ItemAt(Point p);
+    /// <summary>A left click on an item, before selection: return true when the layout handled it (e.g. a heart).</summary>
+    protected virtual bool ItemPressed(FileItem item, Point pos) => false;
     /// <summary>The name cell of a realized item, in this control's coordinates, for the rename box.</summary>
     protected abstract Rect? NameRect(FileItem item);
     /// <summary>Selects what a band (in content coordinates) covers.</summary>
@@ -161,6 +163,11 @@ public abstract class ItemViewBase : UserControl
         switch (point.Properties.PointerUpdateKind)
         {
             case PointerUpdateKind.LeftButtonPressed:
+                if (item is not null && !ctrl && !shift && ItemPressed(item, pos))
+                {
+                    e.Handled = true;
+                    return;
+                }
                 if (e.ClickCount >= 2 && item is not null && !ctrl && !shift)
                 {
                     Selection.SelectOnly(item);

@@ -86,6 +86,7 @@ public static class SettingsView
                 Toggle("Compact rows", null, s.CompactRows, v => s.CompactRows = v),
                 Toggle("Friendly dates", "“Today 14:32”, “Yesterday”, “Mon 09:10”", s.RelativeDates, v => s.RelativeDates = v),
                 Toggle("Size bars", "Proportional bars in the Size column", s.ShowSizeBars, v => s.ShowSizeBars = v),
+                Toggle("Favorite hearts", "A heart beside each folder: click it to add or remove the folder from favorites", s.FavoriteHearts, v => s.FavoriteHearts = v),
                 Toggle("Folders before files", null, s.FoldersFirst, v => s.FoldersFirst = v),
                 Section("BEHAVIOUR"),
                 Toggle("Open items with a single click", null, s.SingleClickOpen, v => s.SingleClickOpen = v),

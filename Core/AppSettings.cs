@@ -66,6 +66,8 @@ public sealed class AppSettings
     public bool FoldersFirst { get; set; } = true;
     public FolderSizeMode FolderSizes { get; set; } = FolderSizeMode.LocalDrives;
     public bool ShowSizeBars { get; set; } = true;
+    /// <summary>A heart left of each folder's icon: click it to add or remove the folder from favorites.</summary>
+    public bool FavoriteHearts { get; set; } = true;
     public int TileSize { get; set; } = 128;
     public double MillerColumnWidth { get; set; } = 250;
     public double NameColumnWidth { get; set; } = 340;

@@ -208,8 +208,17 @@ public sealed class DetailsList : ItemViewBase
         if (index >= 0) _items.ScrollIntoView(index);
     }
 
+    /// <summary>A click on a folder's heart adds it to (or removes it from) favorites instead of selecting it.</summary>
+    protected override bool ItemPressed(FileItem item, Point pos)
+    {
+        if (!DetailsRow.HasHeart(item) || pos.X < DetailsRow.HeartHitLeft || pos.X > DetailsRow.HeartHitRight) return false;
+        Sidebar.ToggleFavorite(item.Path);
+        return true;
+    }
+
     public override void InvalidateRows()
     {
+        _header?.InvalidateVisual();
         foreach (var c in _items.GetRealizedContainers())
             foreach (var row in c.GetVisualDescendants().OfType<DetailsRow>())
                 row.InvalidateVisual();
@@ -221,13 +230,29 @@ public sealed class DetailsList : ItemViewBase
 /// <summary>One custom-drawn row. Rows are recycled as the list scrolls, so all state comes from the bound item.</summary>
 public sealed class DetailsRow : Control
 {
-    public const double IconLeft = 20;
-    public const double TextLeft = 44;
+    /// <summary>Extra room on the left for the favorite heart, when hearts are switched on.</summary>
+    public static double HeartSpace => AppSettings.Current.FavoriteHearts ? 14 : 0;
+    public static double IconLeft => 20 + HeartSpace;
+    public static double TextLeft => 44 + HeartSpace;
+    /// <summary>Centre of the heart, and the x range a click on it covers (row coordinates).</summary>
+    public const double HeartCenter = 23;
+    public const double HeartHitLeft = 14, HeartHitRight = 32;
+
+    private static readonly IPen HeartPen = new Pen(new SolidColorBrush(Color.Parse("#8891A3")), 1.2);
+    private static readonly IBrush HeartRed = new SolidColorBrush(Color.Parse("#E5484D"));
+    private static readonly IPen HeartRedPen = new Pen(HeartRed, 1.2);
+    private static readonly Geometry HeartShape = Geometry.Parse(
+        "M6,10.6 C6,10.6 0.6,7.1 0.6,3.7 C0.6,2 1.9,0.6 3.5,0.6 C4.6,0.6 5.5,1.2 6,2.1 C6.5,1.2 7.4,0.6 8.5,0.6 C10.1,0.6 11.4,2 11.4,3.7 C11.4,7.1 6,10.6 6,10.6 Z");
+
+    /// <summary>Whether this item gets a heart: real folders only (not drives, the network or a server list).</summary>
+    public static bool HasHeart(FileItem item) =>
+        AppSettings.Current.FavoriteHearts && item.Kind == ItemKind.Folder && !PathUtil.IsVirtual(item.Path);
 
     private readonly DetailsList _owner;
     private FileItem? _item;
     private FormattedText? _name, _date, _type, _size;
     private bool _dirty = true;
+    private double _builtSpace = -1;
 
     public DetailsRow(DetailsList owner)
     {
@@ -255,6 +280,7 @@ public sealed class DetailsRow : Control
     {
         base.OnAttachedToVisualTree(e);
         _owner.Layout.Changed += OnLayoutChanged;
+        Sidebar.FavoritesChanged += InvalidateVisual;
         RequestIcon();
     }
 
@@ -262,6 +288,7 @@ public sealed class DetailsRow : Control
     {
         base.OnDetachedFromVisualTree(e);
         _owner.Layout.Changed -= OnLayoutChanged;
+        Sidebar.FavoritesChanged -= InvalidateVisual;
     }
 
     private void RequestIcon()
@@ -343,10 +370,11 @@ public sealed class DetailsRow : Control
         // Always paint something across the row so the whole row is hit-testable.
         ctx.FillRectangle(Brushes.Transparent, new Rect(0, 0, w, h));
         if (item is null) return;
-        if (_dirty)
+        if (_dirty || _builtSpace != HeartSpace)
         {
             Build(item);
             _dirty = false;
+            _builtSpace = HeartSpace;
         }
 
         var rowRect = new Rect(4, 1, Math.Max(0, w - 8), h - 2);
@@ -363,7 +391,16 @@ public sealed class DetailsRow : Control
         using var cut = ctx.PushOpacity(item.IsCut ? 0.45 : 1);
 
         if (item.Label > 0)
-            ctx.DrawEllipse(Skin.Label(item.Label), null, new Point(12, h / 2), 3.5, 3.5);
+            ctx.DrawEllipse(Skin.Label(item.Label), null, new Point(HeartSpace > 0 ? 10 : 12, h / 2), 3.5, 3.5);
+
+        if (HasHeart(item))
+        {
+            var fav = Sidebar.IsFavorite(item.Path);
+            // Hollow and faint until the row is hovered; solid red once the folder is a favorite.
+            using var o = ctx.PushOpacity(fav ? 1 : IsPointerOver || item.IsSelected ? 0.9 : 0.45);
+            using var t = ctx.PushTransform(Matrix.CreateTranslation(HeartCenter - 6, Math.Round(h / 2 - 5.6)));
+            ctx.DrawGeometry(fav ? HeartRed : null, fav ? HeartRedPen : HeartPen, HeartShape);
+        }
 
         if (item.Icon is { } icon)
         {

@@ -43,6 +43,7 @@ public sealed class Sidebar : UserControl
         Labels.Changed += () => Dispatcher.UIThread.Post(Rebuild);
         Core.Remote.Connections.Changed += () => Dispatcher.UIThread.Post(Rebuild);
         M365.Changed += () => Dispatcher.UIThread.Post(Rebuild);
+        FavoritesChanged += Rebuild;
         Rebuild();
     }
 
@@ -270,21 +271,27 @@ public sealed class Sidebar : UserControl
         SetCurrent(_current);
     }
 
-    public void AddFavorite(string path)
+    /// <summary>Raised whenever the favorites list changes (sidebar, menus, or a row's heart).</summary>
+    public static event Action? FavoritesChanged;
+
+    public void AddFavorite(string path) => SetFavorite(path, true);
+
+    public void RemoveFavorite(string path) => SetFavorite(path, false);
+
+    public static void SetFavorite(string path, bool favorite)
     {
         var favs = AppSettings.Current.Favorites;
-        if (favs.Contains(path, PathUtil.Comparer)) return;
-        favs.Add(path);
+        if (favorite)
+        {
+            if (favs.Contains(path, PathUtil.Comparer)) return;
+            favs.Add(path);
+        }
+        else if (favs.RemoveAll(p => PathUtil.Same(p, path)) == 0) return;
         AppSettings.SaveSoon();
-        Rebuild();
+        FavoritesChanged?.Invoke();
     }
 
-    public void RemoveFavorite(string path)
-    {
-        AppSettings.Current.Favorites.RemoveAll(p => PathUtil.Same(p, path));
-        AppSettings.SaveSoon();
-        Rebuild();
-    }
+    public static void ToggleFavorite(string path) => SetFavorite(path, !IsFavorite(path));
 
     public void MoveFavorite(string path, int delta)
     {
@@ -294,7 +301,7 @@ public sealed class Sidebar : UserControl
         if (i < 0 || j < 0 || j >= favs.Count) return;
         (favs[i], favs[j]) = (favs[j], favs[i]);
         AppSettings.SaveSoon();
-        Rebuild();
+        FavoritesChanged?.Invoke();
     }
 
     public static bool IsFavorite(string path) => AppSettings.Current.Favorites.Contains(path, PathUtil.Comparer);
