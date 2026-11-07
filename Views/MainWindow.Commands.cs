@@ -89,6 +89,13 @@ public sealed partial class MainWindow
         Add("Invert selection", "select", "Ctrl+I", () => V()?.ActiveSelection?.Invert());
         Add("Select none", "select", null, () => V()?.ActiveSelection?.Clear());
         Add("Quick Look", "eye", null, () => { if (V() is { } v) QuickLook(v); });
+        Add("Slideshow of this folder", "play", null, () =>
+        {
+            if (V() is not { } v || PathUtil.IsVirtual(v.ActiveFolder)) return;
+            var images = v.ActiveListing?.Items.Where(IsViewableImage).ToList() ?? [];
+            if (images.Count == 0) Toasts.Show("There are no images here.");
+            else ViewImages(v, [v.FocusedItem is { } f && IsViewableImage(f) ? f : images[0]], slideshow: true);
+        });
 
         // Files
         Add("Copy", "copy", "Ctrl+C", () => _ = CopyToClipboardAsync(false));

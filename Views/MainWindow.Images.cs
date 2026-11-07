@@ -88,6 +88,7 @@ public sealed partial class MainWindow
     private void OnAccentChanged()
     {
         Icon = AppIcon.CreateWindowIcon();
+        PaxImageViewer.ViewerTheme.SetAccent(AccentTheme.Accent);
         foreach (var p in _panes)
             foreach (var t in p.Tabs) t.InvalidateRows();
         _sidebar.Rebuild();

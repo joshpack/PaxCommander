@@ -103,6 +103,15 @@ public sealed partial class MainWindow
                 yield return Item($"Open {mounted.DriveRoot.TrimEnd('\\')}", "drive", () => OpenInNewTab(mounted.DriveRoot, false));
         }
         yield return Item("Quick Look", "eye", () => QuickLook(view), "Space");
+        if (items.Any(IsViewableImage))
+        {
+            var images = items.Where(IsViewableImage).ToList();
+            if (!AppSettings.Current.OpenImagesInViewer)
+                yield return Item("View in PAX Image Viewer", "image", () => ViewImages(view, images));
+            yield return Item(images.Count > 1 ? "Slideshow of these images" : "Slideshow from here", "play", () => ViewImages(view, images, slideshow: true));
+        }
+        else if (single && first.IsDirectory && !first.IsDrive)
+            yield return Item("Slideshow", "play", () => SlideshowFolder(first.Path));
         yield return Sep();
 
         if (!anyDrive)

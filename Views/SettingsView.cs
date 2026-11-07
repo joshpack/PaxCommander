@@ -90,6 +90,7 @@ public static class SettingsView
                 Toggle("Folders before files", null, s.FoldersFirst, v => s.FoldersFirst = v),
                 Section("BEHAVIOUR"),
                 Toggle("Open items with a single click", null, s.SingleClickOpen, v => s.SingleClickOpen = v),
+                Toggle("Open images in the built-in viewer", "Zoom far in, step through the folder and run slideshows. Off: Windows' default app", s.OpenImagesInViewer, v => s.OpenImagesInViewer = v),
                 Toggle("Reopen my tabs at start", null, s.RestoreSession, v => s.RestoreSession = v),
                 Toggle("Check for updates", "Looks for a new version once a day and asks before installing it", s.CheckForUpdates, v => s.CheckForUpdates = v),
                 Row("Terminal command", "{path} is replaced by the folder", terminal),

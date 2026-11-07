@@ -3,6 +3,16 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.3.9 (2026-11-07)
+- Built-in image viewer (PAX Image Viewer, also a standalone app at github.com/joshpack/PaxImageViewer): opening
+  an image shows it in its own window with deep, high-quality zoom (to 51,200%, crisp pixels and a pixel grid when far
+  in), stepping through the tab's images in its sort order (several selected: just those), and slideshows with
+  adjustable speed, shuffle, cross-fade and an option to keep the zoom between images. The tab selects whichever image
+  is on screen. Right-click: Slideshow from here / Slideshow (folders); command palette: Slideshow of this folder.
+  Settings > Behaviour > "Open images in the built-in viewer" switches back to Windows' default app. The viewer's
+  preferences are shared with the standalone app (%APPDATA%\PaxImageViewer). Build needs PaxImageViewer cloned beside
+  this repo.
+
 ## 1.3.8 (2026-11-05)
 - Self-update: once a day, a few seconds after start-up, PAX Commander checks GitHub's latest release. If there's a
   newer version a card shows what's new with Update now / Later / Skip this version; nothing downloads until you

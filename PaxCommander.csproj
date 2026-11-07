@@ -12,7 +12,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <Version>1.3.8</Version>
+    <Version>1.3.9</Version>
     <!-- The Windows shell parts are guarded at runtime; the analyzer can't see those guards. -->
     <NoWarn>$(NoWarn);CA1416</NoWarn>
   </PropertyGroup>
@@ -24,6 +24,8 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
     <PackageReference Include="FluentFTP" Version="55.1.0" />
     <PackageReference Include="SSH.NET" Version="2026.0.0" />
+    <!-- The image viewer is its own project (it also ships as a standalone app); clone PaxImageViewer next to this repo. -->
+    <ProjectReference Include="..\PaxImageViewer\Core\PaxImageViewer.Core.csproj" />
   </ItemGroup>
 
   <!-- Native graphics libs ship large debug symbols; keep the install lean. -->

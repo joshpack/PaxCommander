@@ -77,6 +77,8 @@ public sealed class AppSettings
 
     // Behaviour
     public bool SingleClickOpen { get; set; }
+    /// <summary>Opening an image shows it in the built-in viewer (PAX Image Viewer) instead of Windows' default app.</summary>
+    public bool OpenImagesInViewer { get; set; } = true;
     public bool ConfirmRecycle { get; set; }
     public bool RestoreSession { get; set; } = true;
     /// <summary>Look for a newer release on GitHub once a day (it only installs when you say so).</summary>

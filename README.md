@@ -11,6 +11,7 @@ A fast two-pane file manager for Windows, built to replace File Explorer: tabs, 
 ### Browsing
 - **Two panes, each with tabs.** Side by side or stacked. Your tabs and folders come back when you restart.
 - **Three views:** details list, thumbnails, and Miller columns.
+- **Built-in image viewer** with deep, high-quality zoom and folder slideshows that can keep your zoom level ([PAX Image Viewer](https://github.com/joshpack/PaxImageViewer), also available on its own).
 - **Preview pane and Quick Look** (Space) for pictures, video, audio, PDF and Office files, archives, text and code. Code is colored by language, with line numbers; minified JSON and XML are laid out.
 - **Address bar** with breadcrumbs you can click or type into, with folder autocomplete.
 - **Sidebar** with favorites, drives (as a list or compact tiles), saved connections, network, frequent folders and color labels.
@@ -151,6 +152,7 @@ There are no downloads. If you want to experiment, [build from source](#build-fr
 Needs the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
 ```powershell
+git clone https://github.com/joshpack/PaxImageViewer.git   # the image viewer, referenced from next door
 git clone https://github.com/joshpack/PaxCommander.git
 cd PaxCommander
 dotnet run -c Release

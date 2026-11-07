@@ -430,6 +430,15 @@ public sealed partial class MainWindow
             _ = OpenRemoteFilesAsync(remote);
             items = items.Except(remote).ToList();
         }
+        if (AppSettings.Current.OpenImagesInViewer)
+        {
+            var images = items.Where(IsViewableImage).ToList();
+            if (images.Count > 0)
+            {
+                ViewImages(view, images);
+                items = items.Except(images).ToList();
+            }
+        }
         foreach (var item in items.Take(25))
         {
             try
