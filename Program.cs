@@ -26,6 +26,13 @@ internal static class Program
         StartupPaths = args.Where(a => !a.StartsWith("--", StringComparison.Ordinal)).ToArray();
         var dirArg = Array.IndexOf(args, "--dir");
         if (dirArg >= 0 && dirArg + 1 < args.Length) StartupPaths = StartupPaths.Where(p => p != args[dirArg + 1]).ToArray();
+        // Started by an in-place update (portable / PAX Toolkit copy): wait for the old copy to close first.
+        var afterUpdate = Array.IndexOf(args, "--after-update");
+        if (afterUpdate >= 0 && afterUpdate + 1 < args.Length)
+        {
+            StartupPaths = StartupPaths.Where(p => p != args[afterUpdate + 1]).ToArray();
+            if (int.TryParse(args[afterUpdate + 1], out var oldPid)) Installer.WaitForExit(oldPid);
+        }
 
         // Our own taskbar identity: Windows then takes the icon from our window instead of a stale cached copy
         // of the exe's old icon, and groups our windows together.

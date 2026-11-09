@@ -23,7 +23,11 @@ public static class UpdatePrompt
         var s = AppSettings.Current;
         // Test runs (their own data folder) never reach GitHub unless pointed at a fake.
         if (Environment.GetEnvironmentVariable("PAXCMD_DATA") is { Length: > 0 } && Environment.GetEnvironmentVariable("PAXCMD_UPDATE_API") is not { Length: > 0 }) return;
-        _ = Task.Run(Updater.CleanUp);
+        _ = Task.Run(() =>
+        {
+            Updater.CleanUp();
+            Updater.CleanUpOldExe();
+        });
         if (!s.CheckForUpdates || DateTime.UtcNow - s.LastUpdateCheck < TimeSpan.FromHours(20)) return;
         await Task.Delay(TimeSpan.FromSeconds(8));
         UpdateInfo? info;

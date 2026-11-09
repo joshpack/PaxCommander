@@ -137,9 +137,59 @@ public static partial class Updater
     public static string QuietArguments(string folder, int waitPid, bool desktop, bool folderMenu) =>
         $"--quiet --dir \"{folder}\" --wait-pid {waitPid} --relaunch" + (desktop ? "" : " --no-desktop") + (folderMenu ? "" : " --no-folder-menu");
 
+    /// <summary>
+    /// A self-contained single-file copy that isn't the setup-installed one: the portable zip, or a copy PAX Toolkit
+    /// installed. The release's setup exe is the very same single file, so these update by swapping the exe in place.
+    /// (A multi-file build has PaxCommander.dll beside it and gets the setup screen instead.)
+    /// </summary>
+    public static bool RunningPortableCopy =>
+        !RunningInstalledCopy && Environment.ProcessPath is { } exe &&
+        !File.Exists(Path.Combine(Path.GetDirectoryName(exe)!, "PaxCommander.dll"));
+
+    /// <summary>
+    /// Replaces <paramref name="exe"/> with <paramref name="newExe"/>: the running file is renamed to .old (Windows
+    /// allows that), the new one moved into its place; on failure the old one goes back.
+    /// </summary>
+    public static void SwapExe(string exe, string newExe)
+    {
+        var old = exe + ".old";
+        TryDelete(old);
+        var staged = exe + ".new";
+        File.Copy(newExe, staged, overwrite: true);
+        File.Move(exe, old);
+        try
+        {
+            File.Move(staged, exe);
+        }
+        catch
+        {
+            File.Move(old, exe);
+            TryDelete(staged);
+            throw;
+        }
+    }
+
+    /// <summary>Removes the .old exe left by an in-place update.</summary>
+    public static void CleanUpOldExe()
+    {
+        if (Environment.ProcessPath is { } exe) TryDelete(exe + ".old");
+    }
+
     /// <summary>Starts the installer. Returns true when the caller should now close so it can be replaced.</summary>
     public static bool Launch(string setupPath)
     {
+        if (RunningPortableCopy)
+        {
+            var exe = Environment.ProcessPath!;
+            SwapExe(exe, setupPath);
+            // The new copy waits for us to close, then opens (otherwise it would just hand off to this window).
+            Process.Start(new ProcessStartInfo(exe, $"--after-update {Environment.ProcessId}")
+            {
+                UseShellExecute = false,
+                WorkingDirectory = Path.GetDirectoryName(exe)!,
+            });
+            return true;
+        }
         if (RunningInstalledCopy)
         {
             var folder = Installer.InstalledFolder!;

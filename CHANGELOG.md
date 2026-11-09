@@ -3,6 +3,12 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
 
+## 1.3.10 (2026-11-08)
+- Updating a portable copy, or one PAX Toolkit installed, now replaces that copy's PaxCommander.exe in place (the
+  release's setup exe is the same single file) and reopens it, instead of opening the setup screen and leaving a
+  second, installed copy behind. The old exe is kept as PaxCommander.exe.old until the next start and put back if
+  the swap fails. PAX Toolkit 1.1.5 reads the updated exe's version, so it doesn't offer the same update again.
+
 ## 1.3.9 (2026-11-07)
 - Built-in image viewer (PAX Image Viewer, also a standalone app at github.com/joshpack/PaxImageViewer): opening
   an image shows it in its own window with deep, high-quality zoom (to 51,200%, crisp pixels and a pixel grid when far
