@@ -1,8 +1,8 @@
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>
 /// Subsequence matching with the usual bonuses (consecutive letters, word starts, the very start), so "dlpx" finds
-/// "Downloads\pax-export". Score 0 = no match.
+/// "Downloads\pxd-export". Score 0 = no match.
 /// </summary>
 public static class Fuzzy
 {

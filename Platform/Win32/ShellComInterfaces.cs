@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 // Classic COM interop declarations. Every method is [PreserveSig] so failures come back as HRESULTs (the callers turn
 // them into null / empty results) and interface pointers come back raw, to be wrapped by ComInterop.Take — an RCW

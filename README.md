@@ -1,17 +1,17 @@
-# PAX Commander
+# pxd Commander
 
 A fast two-pane file manager for Windows, built to replace File Explorer: tabs, a real search, FTP/SFTP servers and a built-in terminal, all in one window.
 
-![PAX Commander with two panes: a project folder with Git status on the left, photo thumbnails on the right](docs/screenshots/dual-pane.png)
+![pxd Commander with two panes: a project folder with Git status on the left, photo thumbnails on the right](docs/screenshots/dual-pane.png)
 
-**[Download the latest version](https://github.com/joshpack/PaxCommander/releases/latest)** for Windows 10/11 (64-bit). No admin rights or .NET install needed.
+**[Download the latest version](https://github.com/joshpack/pxdCommander/releases/latest)** for Windows 10/11 (64-bit). No admin rights or .NET install needed.
 
 ## Features
 
 ### Browsing
 - **Two panes, each with tabs.** Side by side or stacked. Your tabs and folders come back when you restart.
 - **Three views:** details list, thumbnails, and Miller columns.
-- **Built-in image viewer** with deep, high-quality zoom and folder slideshows that can keep your zoom level ([PAX Image Viewer](https://github.com/joshpack/PaxImageViewer), also available on its own).
+- **Built-in image viewer** with deep, high-quality zoom and folder slideshows that can keep your zoom level ([pxd Image Viewer](https://github.com/joshpack/pxdImageViewer), also available on its own).
 - **Preview pane and Quick Look** (Space) for pictures, video, audio, PDF and Office files, archives, text and code. Code is colored by language, with line numbers; minified JSON and XML are laid out.
 - **Address bar** with breadcrumbs you can click or type into, with folder autocomplete.
 - **Sidebar** with favorites, drives (as a list or compact tiles), saved connections, network, frequent folders and color labels.
@@ -57,7 +57,7 @@ Plain words must all appear in the name, in any order. `"quoted text"` is one te
 ### Look
 - Dark and light themes, or follow Windows. The accent color is yours to pick.
 - Its own title bar, in the same style as the rest of the window.
-- One window at a time: opening PAX Commander again hands the folder to the window that's already open.
+- One window at a time: opening pxd Commander again hands the folder to the window that's already open.
 
 ## Screenshots
 
@@ -85,63 +85,63 @@ The Windows-only parts are: shell icons and thumbnails, the native right-click m
 
 ## Install
 
-Downloads are on the [latest release](https://github.com/joshpack/PaxCommander/releases/latest) page:
+Downloads are on the [latest release](https://github.com/joshpack/pxdCommander/releases/latest) page:
 
 | File | What it is |
 | --- | --- |
-| `PaxCommander-1.2.0-win-x64-setup.exe` | Installer (recommended) |
-| `PaxCommander-1.2.0-win-x64-portable.zip` | Portable version: one exe, nothing installed |
-| `paxcomm-setup.exe` | The same installer, under a name that stays the same between versions |
+| `pxdCommander-1.2.0-win-x64-setup.exe` | Installer (recommended) |
+| `pxdCommander-1.2.0-win-x64-portable.zip` | Portable version: one exe, nothing installed |
+| `pxdcomm-setup.exe` | The same installer, under a name that stays the same between versions |
 | `*.sha256` | SHA-256 checksum for each file |
 
 Both are self-contained: .NET does not need to be installed.
 
 ### Windows: installer
 
-1. Download `PaxCommander-1.2.0-win-x64-setup.exe` and run it.
-2. Choose the folder (default `%LOCALAPPDATA%\Programs\PAX Commander`), whether you want a desktop shortcut, and whether folders should get **Open in PAX Commander** on their right-click menu.
+1. Download `pxdCommander-1.2.0-win-x64-setup.exe` and run it.
+2. Choose the folder (default `%LOCALAPPDATA%\Programs\pxd Commander`), whether you want a desktop shortcut, and whether folders should get **Open in pxd Commander** on their right-click menu.
 3. Click **Install**. No admin rights are needed: everything is installed for your user account only.
 
-It adds a Start menu shortcut and an entry in **Settings ▸ Apps ▸ Installed apps**. To update, run the newer setup; it closes PAX Commander if it's open and replaces it in place.
+It adds a Start menu shortcut and an entry in **Settings ▸ Apps ▸ Installed apps**. To update, run the newer setup; it closes pxd Commander if it's open and replaces it in place.
 
 The files aren't code-signed, so Windows SmartScreen may say "Windows protected your PC". Click **More info**, then **Run anyway**. You can check the download first:
 
 ```powershell
-Get-FileHash .\PaxCommander-1.2.0-win-x64-setup.exe -Algorithm SHA256
-# compare with the hash in PaxCommander-1.2.0-win-x64-setup.exe.sha256
+Get-FileHash .\pxdCommander-1.2.0-win-x64-setup.exe -Algorithm SHA256
+# compare with the hash in pxdCommander-1.2.0-win-x64-setup.exe.sha256
 ```
 
 **Silent install** (for scripts and deployment):
 
 ```powershell
-.\PaxCommander-1.2.0-win-x64-setup.exe --quiet
-.\PaxCommander-1.2.0-win-x64-setup.exe --quiet --dir "D:\Apps\PAX Commander" --no-desktop --no-folder-menu
+.\pxdCommander-1.2.0-win-x64-setup.exe --quiet
+.\pxdCommander-1.2.0-win-x64-setup.exe --quiet --dir "D:\Apps\pxd Commander" --no-desktop --no-folder-menu
 ```
 
 | Option | Effect |
 | --- | --- |
 | `--quiet` | Install without any window |
-| `--dir <folder>` | Install folder (default: where it's installed now, else `%LOCALAPPDATA%\Programs\PAX Commander`) |
+| `--dir <folder>` | Install folder (default: where it's installed now, else `%LOCALAPPDATA%\Programs\pxd Commander`) |
 | `--no-desktop` | No desktop shortcut |
-| `--no-folder-menu` | No "Open in PAX Commander" on folder right-click menus |
+| `--no-folder-menu` | No "Open in pxd Commander" on folder right-click menus |
 
 ### Windows: portable
 
-1. Download `PaxCommander-1.2.0-win-x64-portable.zip` and unzip it anywhere (a USB stick works).
-2. Run `PaxCommander.exe`.
+1. Download `pxdCommander-1.2.0-win-x64-portable.zip` and unzip it anywhere (a USB stick works).
+2. Run `pxdCommander.exe`.
 
-Nothing is registered: no shortcuts, no right-click entry, no Apps entry. Settings still go to `%APPDATA%\PaxCommander` unless you set `PAXCMD_DATA` (see [Data and settings](#data-and-settings)). Don't rename the exe to anything containing "setup", or it starts the installer instead.
+Nothing is registered: no shortcuts, no right-click entry, no Apps entry. Settings still go to `%APPDATA%\pxdCommander` unless you set `PXDCMD_DATA` (see [Data and settings](#data-and-settings)). Don't rename the exe to anything containing "setup", or it starts the installer instead.
 
 ### Uninstall
 
-- **Settings ▸ Apps ▸ Installed apps ▸ PAX Commander ▸ Uninstall.** You can choose to also remove your settings, saved connections and their passwords. Your own files are never touched.
+- **Settings ▸ Apps ▸ Installed apps ▸ pxd Commander ▸ Uninstall.** You can choose to also remove your settings, saved connections and their passwords. Your own files are never touched.
 - Silently (keeps your settings):
 
   ```powershell
-  & "$env:LOCALAPPDATA\Programs\PAX Commander\PaxCommander.exe" --uninstall --quiet
+  & "$env:LOCALAPPDATA\Programs\pxd Commander\pxdCommander.exe" --uninstall --quiet
   ```
 
-- Portable version: delete its folder, and `%APPDATA%\PaxCommander` if you want the settings gone too.
+- Portable version: delete its folder, and `%APPDATA%\pxdCommander` if you want the settings gone too.
 
 ### Linux and macOS
 
@@ -152,9 +152,9 @@ There are no downloads. If you want to experiment, [build from source](#build-fr
 Needs the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
 ```powershell
-git clone https://github.com/joshpack/PaxImageViewer.git   # the image viewer, referenced from next door
-git clone https://github.com/joshpack/PaxCommander.git
-cd PaxCommander
+git clone https://github.com/joshpack/pxdImageViewer.git   # the image viewer, referenced from next door
+git clone https://github.com/joshpack/pxdCommander.git
+cd pxdCommander
 dotnet run -c Release
 ```
 
@@ -164,20 +164,24 @@ Publish a framework-dependent build (needs the .NET 10 Desktop Runtime on the ta
 dotnet publish -c Release -r win-x64 --self-contained false -p:DebugType=none -o publish
 ```
 
-Build the self-contained installer (`paxcomm-setup.exe` plus its `.sha256`):
+Build the self-contained installer (`pxdcomm-setup.exe` plus its `.sha256`):
 
 ```powershell
-.\installer\build-setup.ps1                  # output: %LOCALAPPDATA%\PaxCommander\installer
+.\installer\build-setup.ps1                  # output: %LOCALAPPDATA%\pxdCommander\installer
 .\installer\build-setup.ps1 -OutDir .\dist   # or a folder of your choice
 ```
 
-The installer is the app itself, published as one self-contained file. When its file name contains "setup" (or it's started with `--install`), it shows the install screen instead of the file manager. The portable zip holds the same file, named `PaxCommander.exe`.
+The installer is the app itself, published as one self-contained file. When its file name contains "setup" (or it's started with `--install`), it shows the install screen instead of the file manager. The portable zip holds the same file, named `pxdCommander.exe`.
 
-For a release, bump `<Version>` in `PaxCommander.csproj` and add an entry to [CHANGELOG.md](CHANGELOG.md).
+For a release, bump `<Version>` in `pxdCommander.csproj` and add an entry to [CHANGELOG.md](CHANGELOG.md).
+
+`pxdCommander.exe --self-test <report.txt>` checks a build without opening a window: the settings migration and the installer, run against temp folders and a private registry hive.
+
+The README screenshots come from `tools/Screenshots` (Avalonia.Headless, no window): `dotnet run --project tools\Screenshots -c Release -- docs\screenshots C:\dev\Demo`. The second argument is where it builds the made-up sample folders (they show in the pictures, so use a short path without your user name); it deletes them afterwards.
 
 ## Data and settings
 
-Everything lives in `%APPDATA%\PaxCommander`. Set the environment variable `PAXCMD_DATA` to a folder to keep it somewhere else.
+Everything lives in `%APPDATA%\pxdCommander`. Set the environment variable `PXDCMD_DATA` to a folder to keep it somewhere else. Settings, saved passwords and an installation from versions before the rename to pxd move across automatically (1.4.0).
 
 | File | Contents |
 | --- | --- |
@@ -191,7 +195,7 @@ Everything lives in `%APPDATA%\PaxCommander`. Set the environment variable `PAXC
 
 Passwords for servers and Microsoft 365 are kept in **Windows Credential Manager**, never in these files.
 
-The installer writes only per-user registry keys, and uninstalling removes them: `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\PaxCommander` for the Apps entry, and `HKCU\Software\Classes\Directory\shell\PaxCommander`, `...\Directory\Background\shell\PaxCommander` and `...\Drive\shell\PaxCommander` for the right-click entry.
+The installer writes only per-user registry keys, and uninstalling removes them: `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\pxdCommander` for the Apps entry, and `HKCU\Software\Classes\Directory\shell\pxdCommander`, `...\Directory\Background\shell\pxdCommander` and `...\Drive\shell\pxdCommander` for the right-click entry.
 
 ## Keyboard shortcuts
 

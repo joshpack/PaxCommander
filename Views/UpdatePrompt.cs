@@ -3,9 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// "A new version is out" card: shows what's new and installs only when the user clicks Update now. The automatic
@@ -22,7 +22,7 @@ public static class UpdatePrompt
     {
         var s = AppSettings.Current;
         // Test runs (their own data folder) never reach GitHub unless pointed at a fake.
-        if (Environment.GetEnvironmentVariable("PAXCMD_DATA") is { Length: > 0 } && Environment.GetEnvironmentVariable("PAXCMD_UPDATE_API") is not { Length: > 0 }) return;
+        if (Environment.GetEnvironmentVariable("PXDCMD_DATA") is { Length: > 0 } && Environment.GetEnvironmentVariable("PXDCMD_UPDATE_API") is not { Length: > 0 }) return;
         _ = Task.Run(() =>
         {
             Updater.CleanUp();
@@ -83,7 +83,7 @@ public static class UpdatePrompt
                 Dispatcher.UIThread.Post(window.Close, DispatcherPriority.Background);
             }
             else if (result == "opened")
-                Toasts.Show("The PAX Commander installer is open.", ToastKind.Info);
+                Toasts.Show("The pxd Commander installer is open.", ToastKind.Info);
         }
         finally
         {
@@ -137,7 +137,7 @@ public static class UpdatePrompt
                     status.Text = $"Downloading{mb}… {v:P0}";
                 });
                 var setup = await Updater.DownloadAsync(info, progress, cts.Token);
-                status.Text = "Checksum OK. Installing — PAX Commander will close and reopen in a moment.";
+                status.Text = "Checksum OK. Installing — pxd Commander will close and reopen in a moment.";
                 later.IsEnabled = false;
                 await Task.Delay(500);
                 tcs.TrySetResult(Updater.Launch(setup) ? "close" : "opened");
@@ -180,7 +180,7 @@ public static class UpdatePrompt
         {
             Children =
             {
-                Dialogs.Title($"PAX Commander {info.Version} is available"),
+                Dialogs.Title($"pxd Commander {info.Version} is available"),
                 Dialogs.Body($"You have {Installer.Version}. Here's what's new:"),
                 notes,
                 bar,

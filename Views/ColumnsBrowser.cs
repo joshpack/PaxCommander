@@ -4,9 +4,9 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>One column of the Miller view: a folder, its own listing and selection.</summary>
 public sealed class MillerColumn : IDisposable

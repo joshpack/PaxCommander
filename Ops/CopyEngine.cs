@@ -1,4 +1,4 @@
-namespace PaxCommander.Ops;
+namespace pxdCommander.Ops;
 
 /// <summary>
 /// Copy, and Move. A move within one volume renames (instant; a folder meeting an existing folder of the same name

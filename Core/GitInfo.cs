@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>Light git awareness: the branch from .git/HEAD (no process), file states from `git status` when git exists.</summary>
 public static class GitInfo

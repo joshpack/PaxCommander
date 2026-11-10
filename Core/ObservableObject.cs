@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 public abstract class ObservableObject : INotifyPropertyChanged
 {

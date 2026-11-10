@@ -1,7 +1,7 @@
 using Avalonia;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander;
+namespace pxdCommander;
 
 internal static class Program
 {
@@ -23,10 +23,18 @@ internal static class Program
             e.SetObserved();
         };
 
+        // Check of a build: "--self-test <report.txt>" tests the rename migration and the installer against temp folders
+        // and a private registry hive. No window, nothing real touched.
+        if (args is ["--self-test", var reportPath])
+        {
+            File.WriteAllText(reportPath, SelfTest.Run());
+            return;
+        }
+
         StartupPaths = args.Where(a => !a.StartsWith("--", StringComparison.Ordinal)).ToArray();
         var dirArg = Array.IndexOf(args, "--dir");
         if (dirArg >= 0 && dirArg + 1 < args.Length) StartupPaths = StartupPaths.Where(p => p != args[dirArg + 1]).ToArray();
-        // Started by an in-place update (portable / PAX Toolkit copy): wait for the old copy to close first.
+        // Started by an in-place update (portable / pxd Toolkit copy): wait for the old copy to close first.
         var afterUpdate = Array.IndexOf(args, "--after-update");
         if (afterUpdate >= 0 && afterUpdate + 1 < args.Length)
         {
@@ -36,7 +44,7 @@ internal static class Program
 
         // Our own taskbar identity: Windows then takes the icon from our window instead of a stale cached copy
         // of the exe's old icon, and groups our windows together.
-        if (OperatingSystem.IsWindows()) SetCurrentProcessExplicitAppUserModelID("PAX.Commander");
+        if (OperatingSystem.IsWindows()) SetCurrentProcessExplicitAppUserModelID("pxd.Commander");
 
         // Build step: "--write-icon <file.ico>" renders the app mark with the real system fonts and exits, no window.
         if (args is ["--write-icon", var icoPath])
@@ -46,7 +54,7 @@ internal static class Program
             return;
         }
 
-        // paxcomm-setup.exe (or --install / --uninstall): the installer screen instead of the app.
+        // pxdcomm-setup.exe (or --install / --uninstall): the installer screen instead of the app.
         if (OperatingSystem.IsWindows())
         {
             if (args.Contains("--uninstall")) Mode = StartMode.Uninstall;
@@ -56,11 +64,13 @@ internal static class Program
                 Installer.Uninstall(removeSettings: false);
                 return;
             }
-            // Silent install for scripts: paxcomm-setup.exe --quiet [--dir <folder>] [--no-desktop] [--no-folder-menu]
+            // Silent install for scripts: pxdcomm-setup.exe --quiet [--dir <folder>] [--no-desktop] [--no-folder-menu]
             if (Mode == StartMode.Install && args.Contains("--quiet"))
             {
                 var at = Array.IndexOf(args, "--dir");
-                var folder = at >= 0 && at + 1 < args.Length ? args[at + 1] : Installer.InstalledFolder ?? Installer.DefaultFolder;
+                var requested = at >= 0 && at + 1 < args.Length ? args[at + 1] : null;
+                // An update started by a version from before the rename passes its own folder: its default name becomes the new one.
+                var folder = Migration.MapFolder(requested) ?? Installer.SuggestedFolder;
                 // An update started from the app: let that copy close first, then reopen the new one.
                 var wait = Array.IndexOf(args, "--wait-pid");
                 if (wait >= 0 && wait + 1 < args.Length && int.TryParse(args[wait + 1], out var pid)) Installer.WaitForExit(pid);
@@ -73,7 +83,12 @@ internal static class Program
                 {
                     CrashLog.Write("quiet install", ex);
                     // Don't leave the user with no app: reopen whatever is there.
-                    if (args.Contains("--relaunch")) Installer.Relaunch(Path.Combine(folder, "PaxCommander.exe"));
+                    if (args.Contains("--relaunch"))
+                    {
+                        var installed = Path.Combine(folder, "pxdCommander.exe");
+                        var former = requested is null ? null : Path.Combine(requested, Migration.FormerExeName);
+                        Installer.Relaunch(!File.Exists(installed) && former is not null && File.Exists(former) ? former : installed);
+                    }
                 }
                 return;
             }

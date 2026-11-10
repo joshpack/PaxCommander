@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace PaxCommander.Ops;
+namespace pxdCommander.Ops;
 
 /// <summary>
 /// Copies one file with progress, pause and cancel. Windows uses CopyFileEx, which keeps alternate streams, EFS,

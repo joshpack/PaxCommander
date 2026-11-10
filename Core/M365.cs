@@ -2,9 +2,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 public enum M365Service { ExchangeOnline, Graph, Teams, SharePoint, Compliance, Azure }
 
@@ -170,7 +170,7 @@ public static class M365
             // ConvertFrom-SecureString writes, so it never appears in plain text on the command line or in history.
             steps.Add(new(
                 $"$cred = <saved password for {upn} from Windows Credential Manager>",
-                $"$__paxCred = [pscredential]::new({Q(upn)}, (ConvertTo-SecureString {Q(Dpapi(password))}))"));
+                $"$__pxdCred = [pscredential]::new({Q(upn)}, (ConvertTo-SecureString {Q(Dpapi(password))}))"));
         }
 
         foreach (var s in p.Services)
@@ -181,13 +181,13 @@ public static class M365
                 {
                     M365Auth.Certificate => $"Connect-ExchangeOnline -CertificateThumbprint {Q(p.CertThumbprint)} -AppId {Q(p.AppId)} -Organization {Q(tenant)} -ShowBanner:$false",
                     M365Auth.DeviceCode => "Connect-ExchangeOnline -Device -ShowBanner:$false",
-                    M365Auth.Password => "Connect-ExchangeOnline -Credential $__paxCred -ShowBanner:$false",
+                    M365Auth.Password => "Connect-ExchangeOnline -Credential $__pxdCred -ShowBanner:$false",
                     _ => $"Connect-ExchangeOnline{Opt("-UserPrincipalName", upn)} -DisableWAM -ShowBanner:$false",
                 }),
                 M365Service.Compliance => ("ExchangeOnlineManagement", auth switch
                 {
                     M365Auth.Certificate => $"Connect-IPPSSession -CertificateThumbprint {Q(p.CertThumbprint)} -AppId {Q(p.AppId)} -Organization {Q(tenant)} -ShowBanner:$false",
-                    M365Auth.Password => "Connect-IPPSSession -Credential $__paxCred -ShowBanner:$false",
+                    M365Auth.Password => "Connect-IPPSSession -Credential $__pxdCred -ShowBanner:$false",
                     _ => $"Connect-IPPSSession{Opt("-UserPrincipalName", upn)} -DisableWAM -ShowBanner:$false",
                 }),
                 M365Service.Graph => ("Microsoft.Graph.Authentication", auth switch
@@ -201,20 +201,20 @@ public static class M365
                 {
                     M365Auth.Certificate => $"Connect-MicrosoftTeams -CertificateThumbprint {Q(p.CertThumbprint)} -ApplicationId {Q(p.AppId)} -TenantId {Q(tenant)} | Out-Null",
                     M365Auth.DeviceCode => "Connect-MicrosoftTeams -UseDeviceAuthentication | Out-Null",
-                    M365Auth.Password => "Connect-MicrosoftTeams -Credential $__paxCred | Out-Null",
+                    M365Auth.Password => "Connect-MicrosoftTeams -Credential $__pxdCred | Out-Null",
                     _ => $"Connect-MicrosoftTeams{Opt("-AccountId", upn)}{Opt("-TenantId", tenant)} | Out-Null",
                 }),
                 M365Service.SharePoint => ("Microsoft.Online.SharePoint.PowerShell", auth switch
                 {
                     M365Auth.Certificate => $"Connect-SPOService -Url {Q(p.SharePointAdminUrl)} -ClientId {Q(p.AppId)} -CertificateThumbprint {Q(p.CertThumbprint)} -Tenant {Q(tenant)}",
-                    M365Auth.Password => $"Connect-SPOService -Url {Q(p.SharePointAdminUrl)} -Credential $__paxCred",
+                    M365Auth.Password => $"Connect-SPOService -Url {Q(p.SharePointAdminUrl)} -Credential $__pxdCred",
                     _ => $"Connect-SPOService -Url {Q(p.SharePointAdminUrl)}",
                 }),
                 M365Service.Azure => ("Az.Accounts", auth switch
                 {
                     M365Auth.Certificate => $"Connect-AzAccount -ServicePrincipal -ApplicationId {Q(p.AppId)} -CertificateThumbprint {Q(p.CertThumbprint)} -Tenant {Q(tenant)} | Out-Null",
                     M365Auth.DeviceCode => $"Connect-AzAccount -UseDeviceAuthentication{Opt("-Tenant", tenant)} | Out-Null",
-                    M365Auth.Password => $"Connect-AzAccount -Credential $__paxCred{Opt("-Tenant", tenant)} | Out-Null",
+                    M365Auth.Password => $"Connect-AzAccount -Credential $__pxdCred{Opt("-Tenant", tenant)} | Out-Null",
                     _ => $"try {{ Update-AzConfig -EnableLoginByWam $false -Scope Process | Out-Null }} catch {{ }}; Connect-AzAccount{Opt("-AccountId", upn)}{Opt("-Tenant", tenant)} | Out-Null",
                 }),
                 _ => ("", ""),
@@ -228,12 +228,12 @@ public static class M365
             var line =
                 $"if (-not (Get-Module -ListAvailable {module})) {{ Write-Host '✗ {name}: the {module} module isn''t installed. Install it with:  Install-Module {module} -Scope CurrentUser' }} " +
                 // Some Connect- cmdlets report failure without throwing; "Stop" makes every failure land in catch.
-                $"else {{ $__paxEap = $ErrorActionPreference; try {{ $ErrorActionPreference = 'Stop'; {import}{connect}; Write-Host '✓ {name} connected' }} " +
-                $"catch {{ Write-Host ('✗ {name}: ' + $_.Exception.Message) }} finally {{ $ErrorActionPreference = $__paxEap }} }}";
-            steps.Add(new(connect.Replace("$__paxCred", "$cred"), line));
+                $"else {{ $__pxdEap = $ErrorActionPreference; try {{ $ErrorActionPreference = 'Stop'; {import}{connect}; Write-Host '✓ {name} connected' }} " +
+                $"catch {{ Write-Host ('✗ {name}: ' + $_.Exception.Message) }} finally {{ $ErrorActionPreference = $__pxdEap }} }}";
+            steps.Add(new(connect.Replace("$__pxdCred", "$cred"), line));
         }
 
-        if (auth == M365Auth.Password) steps.Add(new("", "Remove-Variable __paxCred -ErrorAction SilentlyContinue"));
+        if (auth == M365Auth.Password) steps.Add(new("", "Remove-Variable __pxdCred -ErrorAction SilentlyContinue"));
         return steps;
     }
 

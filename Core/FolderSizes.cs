@@ -1,8 +1,8 @@
 using System.Collections.Concurrent;
 using Avalonia.Threading;
-using PaxCommander.Search;
+using pxdCommander.Search;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>
 /// Adds up folder sizes in the background so the Size column (and its bars) work for folders too — the thing Explorer

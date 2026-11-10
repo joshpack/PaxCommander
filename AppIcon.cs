@@ -2,10 +2,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using PaxCommander.Views;
+using pxdCommander.Views;
 using ShapePath = Avalonia.Controls.Shapes.Path;
 
-namespace PaxCommander;
+namespace pxdCommander;
 
 /// <summary>
 /// The app icon: a modern take on the file-manager folder — layered golden folder with a rim light, papers peeking
@@ -25,7 +25,7 @@ public static class AppIcon
 
     private static Grid Build(double size)
     {
-        // "Arctic": an ice-white folder with a blue rim and a blue sheet, "PAX_" in a terminal face split like a
+        // "Arctic": an ice-white folder with a blue rim and a blue sheet, "pxd_" in a terminal face split like a
         // horizon (bright blue above, deep blue below). Fixed colours: the icon is the app's identity, not the accent.
         var blue = Color.Parse("#2D9CFF");
         var canvas = new Canvas { Width = 100, Height = 100 };
@@ -64,7 +64,7 @@ public static class AppIcon
             StrokeLineCap = PenLineCap.Round,
         });
 
-        var text = new FormattedText("PAX_", System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+        var text = new FormattedText("pxd_", System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Consolas"), FontStyle.Normal, FontWeight.Bold), 40, Brushes.White);
         var label = new Viewbox
         {

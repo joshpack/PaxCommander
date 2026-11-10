@@ -1,11 +1,11 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 /// <summary>
 /// Win32 declarations for the shell layer. Structs and constants are nested here so none of these short Win32 names
-/// (POINT, SIZE, MSG…) leak into the PaxCommander.Platform.Win32 namespace that the UI imports.
+/// (POINT, SIZE, MSG…) leak into the pxdCommander.Platform.Win32 namespace that the UI imports.
 /// </summary>
 [SupportedOSPlatform("windows")]
 internal static unsafe class NativeMethods

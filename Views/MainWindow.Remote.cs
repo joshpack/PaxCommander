@@ -5,10 +5,10 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using PaxCommander.Core;
-using PaxCommander.Core.Remote;
+using pxdCommander.Core;
+using pxdCommander.Core.Remote;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>SFTP/FTP: saved connections, prompts, and file operations that involve a server.</summary>
 public sealed partial class MainWindow

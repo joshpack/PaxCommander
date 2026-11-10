@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>A newer release found on GitHub.</summary>
 public sealed record UpdateInfo(string Version, string Notes, string SetupUrl, string ShaUrl, string PageUrl, long Size);
@@ -16,22 +16,22 @@ public sealed record UpdateInfo(string Version, string Notes, string SetupUrl, s
 /// </summary>
 public static partial class Updater
 {
-    public const string Repo = "joshpack/PaxCommander";
+    public const string Repo = "joshpack/pxdCommander";
 
-    /// <summary>Release API address; PAXCMD_UPDATE_API points tests at a local fake.</summary>
+    /// <summary>Release API address; PXDCMD_UPDATE_API points tests at a local fake.</summary>
     private static string LatestUrl =>
-        Environment.GetEnvironmentVariable("PAXCMD_UPDATE_API") is { Length: > 0 } u ? u : $"https://api.github.com/repos/{Repo}/releases/latest";
+        Environment.GetEnvironmentVariable("PXDCMD_UPDATE_API") is { Length: > 0 } u ? u : $"https://api.github.com/repos/{Repo}/releases/latest";
 
     private static readonly Lazy<HttpClient> Http = new(() =>
     {
         var h = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };
-        h.DefaultRequestHeaders.UserAgent.ParseAdd($"PAX-Commander/{Installer.Version}");
+        h.DefaultRequestHeaders.UserAgent.ParseAdd($"pxd-Commander/{Installer.Version}");
         h.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
         return h;
     });
 
     /// <summary>Where downloaded installers wait; cleared on the next start.</summary>
-    public static string DownloadFolder => Path.Combine(Path.GetTempPath(), "PaxCommander-update");
+    public static string DownloadFolder => Path.Combine(Path.GetTempPath(), "pxdCommander-update");
 
     public static bool IsNewer(string candidate, string current) =>
         System.Version.TryParse(candidate.TrimStart('v', 'V'), out var a) && System.Version.TryParse(current.TrimStart('v', 'V'), out var b) && a > b;
@@ -68,11 +68,11 @@ public static partial class Updater
         return new UpdateInfo(version, NotesFrom(root.TryGetProperty("body", out var b) ? b.GetString() ?? "" : ""), setup, sha, page, size);
     }
 
-    [GeneratedRegex(@"^PaxCommander-[\d.]+-win-x64-setup\.exe$", RegexOptions.IgnoreCase)]
-    private static partial Regex SetupName();
+    [GeneratedRegex(@"^pxdCommander-[\d.]+-win-x64-setup\.exe$", RegexOptions.IgnoreCase)]
+    internal static partial Regex SetupName();
 
-    [GeneratedRegex(@"^PaxCommander-[\d.]+-win-x64-setup\.exe\.sha256$", RegexOptions.IgnoreCase)]
-    private static partial Regex SetupShaName();
+    [GeneratedRegex(@"^pxdCommander-[\d.]+-win-x64-setup\.exe\.sha256$", RegexOptions.IgnoreCase)]
+    internal static partial Regex SetupShaName();
 
     /// <summary>The "New in …" part of the release notes as plain lines (falls back to the start of the notes).</summary>
     public static string NotesFrom(string markdown)
@@ -94,7 +94,7 @@ public static partial class Updater
 
         Directory.CreateDirectory(DownloadFolder);
         // The name must contain "setup" so the downloaded copy runs as the installer.
-        var target = Path.Combine(DownloadFolder, $"paxcomm-setup-{info.Version}.exe");
+        var target = Path.Combine(DownloadFolder, $"pxdcomm-setup-{info.Version}.exe");
         var partial = target + ".part";
         using (var response = await Http.Value.GetAsync(info.SetupUrl, HttpCompletionOption.ResponseHeadersRead, ct))
         {
@@ -138,13 +138,13 @@ public static partial class Updater
         $"--quiet --dir \"{folder}\" --wait-pid {waitPid} --relaunch" + (desktop ? "" : " --no-desktop") + (folderMenu ? "" : " --no-folder-menu");
 
     /// <summary>
-    /// A self-contained single-file copy that isn't the setup-installed one: the portable zip, or a copy PAX Toolkit
+    /// A self-contained single-file copy that isn't the setup-installed one: the portable zip, or a copy pxd Toolkit
     /// installed. The release's setup exe is the very same single file, so these update by swapping the exe in place.
-    /// (A multi-file build has PaxCommander.dll beside it and gets the setup screen instead.)
+    /// (A multi-file build has pxdCommander.dll beside it and gets the setup screen instead.)
     /// </summary>
     public static bool RunningPortableCopy =>
         !RunningInstalledCopy && Environment.ProcessPath is { } exe &&
-        !File.Exists(Path.Combine(Path.GetDirectoryName(exe)!, "PaxCommander.dll"));
+        !File.Exists(Path.Combine(Path.GetDirectoryName(exe)!, "pxdCommander.dll"));
 
     /// <summary>
     /// Replaces <paramref name="exe"/> with <paramref name="newExe"/>: the running file is renamed to .old (Windows
@@ -209,6 +209,7 @@ public static partial class Updater
     {
         try
         {
+            Migration.RemoveFormerDownloads();
             if (Directory.Exists(DownloadFolder)) Directory.Delete(DownloadFolder, recursive: true);
         }
         catch

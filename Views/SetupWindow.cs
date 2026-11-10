@@ -4,12 +4,12 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
-/// The install / uninstall screen shown when the program runs as paxcomm-setup.exe (or with --install / --uninstall).
+/// The install / uninstall screen shown when the program runs as pxdcomm-setup.exe (or with --install / --uninstall).
 /// </summary>
 public sealed class SetupWindow : Window
 {
@@ -19,7 +19,7 @@ public sealed class SetupWindow : Window
     public SetupWindow(bool uninstall)
     {
         _uninstall = uninstall;
-        Title = uninstall ? "Uninstall PAX Commander" : "Install PAX Commander";
+        Title = uninstall ? "Uninstall pxd Commander" : "Install pxd Commander";
         Icon = AppIcon.CreateWindowIcon();
         Width = 560;
         SizeToContent = SizeToContent.Height;
@@ -40,7 +40,7 @@ public sealed class SetupWindow : Window
                     Spacing = 2,
                     Children =
                     {
-                        new TextBlock { Text = "PAX Commander", Classes = { "neon" }, FontSize = 24, FontWeight = FontWeight.Bold },
+                        new TextBlock { Text = "pxd Commander", Classes = { "neon" }, FontSize = 24, FontWeight = FontWeight.Bold },
                         new TextBlock { Text = $"Version {Installer.Version}", Foreground = Skin.Muted, FontSize = 12.5 },
                         new TextBlock { Text = "Dual-pane file manager with FTP, SFTP and a built-in terminal", Foreground = Skin.Faint, FontSize = 12.5 },
                     },
@@ -81,12 +81,12 @@ public sealed class SetupWindow : Window
 
     private void ShowInstall()
     {
-        var existing = Installer.InstalledFolder;
-        var folder = new TextBox { Text = existing ?? Installer.DefaultFolder, FontSize = 12.5 };
+        var existing = Installer.InstalledFolder ?? Migration.FormerInstalledFolder;
+        var folder = new TextBox { Text = Installer.SuggestedFolder, FontSize = 12.5 };
         var browse = new Button { Content = "Browse…" };
         browse.Click += async (_, _) =>
         {
-            var picked = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions { Title = "Install PAX Commander in…" });
+            var picked = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions { Title = "Install pxd Commander in…" });
             if (picked.FirstOrDefault()?.TryGetLocalPath() is { } p) folder.Text = Path.Combine(p, Installer.AppName);
         };
         var folderRow = new DockPanel { Children = { browse, folder } };
@@ -94,12 +94,12 @@ public sealed class SetupWindow : Window
         browse.Margin = new Thickness(8, 0, 0, 0);
 
         var desktop = new CheckBox { Content = "Desktop shortcut", IsChecked = true };
-        var menu = new CheckBox { Content = "“Open in PAX Commander” when you right-click a folder", IsChecked = true };
+        var menu = new CheckBox { Content = "“Open in pxd Commander” when you right-click a folder", IsChecked = true };
         var note = new TextBlock
         {
             Text = existing is null
                 ? "Installs for your Windows account only — no administrator rights needed. Uninstall any time from Settings ▸ Apps."
-                : $"Version {Installer.InstalledVersion ?? "?"} is installed. Updating keeps your settings, connections and saved passwords.",
+                : $"Version {Installer.InstalledVersion ?? Migration.FormerInstalledVersion ?? "?"} is installed. Updating keeps your settings, connections and saved passwords.",
             Foreground = Skin.Faint,
             FontSize = 12,
             TextWrapping = TextWrapping.Wrap,
@@ -144,7 +144,7 @@ public sealed class SetupWindow : Window
         _body.Children.Clear();
         _body.Children.Add(new TextBlock
         {
-            Text = updated ? "PAX Commander is up to date." : "PAX Commander is installed.",
+            Text = updated ? "pxd Commander is up to date." : "pxd Commander is installed.",
             FontSize = 16,
             FontWeight = FontWeight.SemiBold,
         });
@@ -155,7 +155,7 @@ public sealed class SetupWindow : Window
             FontSize = 12.5,
             TextWrapping = TextWrapping.Wrap,
         });
-        var launch = new CheckBox { Content = "Open PAX Commander now", IsChecked = true };
+        var launch = new CheckBox { Content = "Open pxd Commander now", IsChecked = true };
         _body.Children.Add(launch);
         var finish = Primary("Finish");
         finish.Click += (_, _) =>
@@ -179,7 +179,7 @@ public sealed class SetupWindow : Window
         go.Classes.Add("danger");
         var cancel = new Button { Content = "Cancel" };
         cancel.Click += (_, _) => Close();
-        _body.Children.Add(new TextBlock { Text = "Remove PAX Commander from this PC?", FontSize = 16, FontWeight = FontWeight.SemiBold });
+        _body.Children.Add(new TextBlock { Text = "Remove pxd Commander from this PC?", FontSize = 16, FontWeight = FontWeight.SemiBold });
         _body.Children.Add(new TextBlock
         {
             Text = "Shortcuts and the folder right-click entry are removed too. Your own files are never touched.",
@@ -195,7 +195,7 @@ public sealed class SetupWindow : Window
             {
                 Installer.Uninstall(wipe.IsChecked == true);
                 _body.Children.Clear();
-                _body.Children.Add(new TextBlock { Text = "PAX Commander has been removed.", FontSize = 16, FontWeight = FontWeight.SemiBold });
+                _body.Children.Add(new TextBlock { Text = "pxd Commander has been removed.", FontSize = 16, FontWeight = FontWeight.SemiBold });
                 var close = Primary("Close");
                 close.Click += (_, _) => Close();
                 _body.Children.Add(Buttons(close));

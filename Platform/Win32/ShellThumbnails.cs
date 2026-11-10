@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 [SupportedOSPlatform("windows")]
 public static class ShellThumbnails

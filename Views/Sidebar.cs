@@ -4,9 +4,9 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 public enum OpenTarget { Here, NewTab, OtherPane }
 
@@ -56,7 +56,7 @@ public sealed class Sidebar : UserControl
 
     private void CheckDrives()
     {
-        var sig = string.Join("|", DriveInfo.GetDrives().Select(d => d.Name));
+        var sig = string.Join("|", DriveSource().Select(d => d.Name));
         if (sig != _driveSignature) Rebuild();
     }
 
@@ -64,7 +64,7 @@ public sealed class Sidebar : UserControl
     {
         _root.Children.Clear();
         _entries.Clear();
-        _driveSignature = string.Join("|", DriveInfo.GetDrives().Select(d => d.Name));
+        _driveSignature = string.Join("|", DriveSource().Select(d => d.Name));
 
         var favHeader = Header("FAVORITES");
         DragDrop.SetAllowDrop(favHeader, true);
@@ -271,6 +271,9 @@ public sealed class Sidebar : UserControl
         SetCurrent(_current);
     }
 
+    /// <summary>The drives listed under DRIVES and NETWORK. The README screenshot renderer narrows it to the system drive.</summary>
+    public static Func<DriveInfo[]> DriveSource { get; set; } = DriveInfo.GetDrives;
+
     /// <summary>Raised whenever the favorites list changes (sidebar, menus, or a row's heart).</summary>
     public static event Action? FavoritesChanged;
 
@@ -355,7 +358,7 @@ public sealed class Sidebar : UserControl
     /// <param name="networkPanel">Mapped network drives, shown under NETWORK below "Network", with their own list/tiles choice.</param>
     private async Task FillDrivesAsync(Panel panel, bool tiles, Panel networkPanel, bool networkTiles)
     {
-        var drives = DriveInfo.GetDrives();
+        var drives = DriveSource();
         var lookups = drives.Select(d => Task.Run(() => FolderListing.DriveItem(d))).ToArray();
         await Task.WhenAny(Task.WhenAll(lookups), Task.Delay(2500));
         for (var i = 0; i < drives.Length; i++)

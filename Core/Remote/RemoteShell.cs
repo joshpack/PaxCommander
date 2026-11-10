@@ -1,7 +1,7 @@
 using System.Text;
 using Renci.SshNet;
 
-namespace PaxCommander.Core.Remote;
+namespace pxdCommander.Core.Remote;
 
 /// <summary>
 /// An interactive SSH shell (a "dumb" terminal, so programs keep their output plain). Output arrives on a background
@@ -37,7 +37,7 @@ public sealed class RemoteShell : IShellSession
     /// <paramref name="folder"/>. The terminal hides output until that first report arrives.
     /// </summary>
     public static string SetupLine(string folder) =>
-        " __pax(){ printf '\\033]7;%s\\007' \"$PWD\"; }; PROMPT_COMMAND=__pax; precmd(){ __pax; }; cd -- " + Quote(folder) + " 2>/dev/null\r";
+        " __pxd(){ printf '\\033]7;%s\\007' \"$PWD\"; }; PROMPT_COMMAND=__pxd; precmd(){ __pxd; }; cd -- " + Quote(folder) + " 2>/dev/null\r";
 
     public static string Quote(string s) => "'" + s.Replace("'", "'\\''") + "'";
 

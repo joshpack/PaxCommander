@@ -5,9 +5,9 @@ using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// Remembered commands for the terminal: a suggestion list while you type (your snippets, the commands you've run

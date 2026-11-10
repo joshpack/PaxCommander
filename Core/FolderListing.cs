@@ -3,9 +3,9 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO.Enumeration;
 using Avalonia.Threading;
-using PaxCommander.Search;
+using pxdCommander.Search;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>An observable list that can swap its whole contents with one Reset notification.</summary>
 public sealed class ItemList : ObservableCollection<FileItem>

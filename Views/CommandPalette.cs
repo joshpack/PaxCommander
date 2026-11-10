@@ -6,7 +6,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 public sealed record PaletteItem(string Title, string? Detail, string Glyph, string? Gesture, Action Run, IBrush? Tint = null);
 

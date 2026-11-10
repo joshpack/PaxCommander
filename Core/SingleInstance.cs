@@ -1,7 +1,7 @@
 using System.IO.Pipes;
 using System.Text.Json;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>
 /// One running copy per user. A later launch passes its paths over a named pipe and exits; the running copy opens them
@@ -10,7 +10,7 @@ namespace PaxCommander.Core;
 public static class SingleInstance
 {
     private static Mutex? _mutex;
-    private static string PipeName => "PaxCommander-" + Environment.UserName;
+    private static string PipeName => "pxdCommander-" + Environment.UserName;
 
     /// <summary>Raised on a background thread with the paths another launch asked for (empty = just show a window).</summary>
     public static event Action<IReadOnlyList<string>>? Received;
@@ -18,7 +18,7 @@ public static class SingleInstance
     /// <returns>True when another copy took the request and this process should exit.</returns>
     public static bool TryHandOff(IReadOnlyList<string> paths)
     {
-        _mutex = new Mutex(true, "Local\\PaxCommander.Instance." + Environment.UserName, out var first);
+        _mutex = new Mutex(true, "Local\\pxdCommander.Instance." + Environment.UserName, out var first);
         if (first)
             return false;
 
@@ -41,7 +41,7 @@ public static class SingleInstance
 
     public static void StartServer()
     {
-        var thread = new Thread(ServerLoop) { IsBackground = true, Name = "PaxCommander instance pipe" };
+        var thread = new Thread(ServerLoop) { IsBackground = true, Name = "pxdCommander instance pipe" };
         thread.Start();
     }
 

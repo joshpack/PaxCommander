@@ -1,4 +1,4 @@
-namespace PaxCommander.Ops;
+namespace pxdCommander.Ops;
 
 /// <summary>
 /// Shared machinery for every job kind: the scan → run lifecycle, the conflict and error prompts with their

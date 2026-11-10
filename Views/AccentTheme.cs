@@ -1,8 +1,8 @@
 using Avalonia;
 using Avalonia.Media;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// The user-chosen accent colour. Every accent-tinted resource (buttons, toggles, selection, glows, gradients, text on

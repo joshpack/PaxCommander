@@ -1,26 +1,39 @@
-# PAX Commander changelog
+# pxd Commander changelog
 
 Internal log of what each version added. Not shown in the app yet.
-Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry here.
+Bump `<Version>` in `pxdCommander.csproj` for every release, and add an entry here.
+
+## 1.4.0 (2026-11-09)
+- Renamed to pxd Commander (company: pxd, pxdtek.com). Exe pxdCommander.exe, settings in %APPDATA%\pxdCommander,
+  installs to %LOCALAPPDATA%\Programs\pxd Commander, Start menu shortcut "pxd Commander", data override env var
+  PXDCMD_DATA, repo github.com/joshpack/pxdCommander, release assets pxdCommander-<v>-win-x64-setup.exe /
+  -portable.zip and pxdcomm-setup.exe. New "pxd_" app icon.
+- One-time migration from the earlier name, safe to repeat: the settings folder moves on first start; saved
+  connection and Microsoft 365 passwords move in Credential Manager the first time they're used; installing (or a
+  self-update) over an earlier install moves it from its old default folder, replaces its Apps entry, folder
+  right-click entries and Start menu / desktop shortcuts (keeping the desktop and folder-menu choices) and removes
+  the old exe.
+- `--self-test <report.txt>` checks the migration and the installer without a window, against temp folders and a
+  private registry hive.
 
 ## 1.3.10 (2026-11-08)
-- Updating a portable copy, or one PAX Toolkit installed, now replaces that copy's PaxCommander.exe in place (the
+- Updating a portable copy, or one pxd Toolkit installed, now replaces that copy's pxdCommander.exe in place (the
   release's setup exe is the same single file) and reopens it, instead of opening the setup screen and leaving a
-  second, installed copy behind. The old exe is kept as PaxCommander.exe.old until the next start and put back if
-  the swap fails. PAX Toolkit 1.1.5 reads the updated exe's version, so it doesn't offer the same update again.
+  second, installed copy behind. The old exe is kept as pxdCommander.exe.old until the next start and put back if
+  the swap fails. pxd Toolkit 1.1.5 reads the updated exe's version, so it doesn't offer the same update again.
 
 ## 1.3.9 (2026-11-07)
-- Built-in image viewer (PAX Image Viewer, also a standalone app at github.com/joshpack/PaxImageViewer): opening
+- Built-in image viewer (pxd Image Viewer, also a standalone app at github.com/joshpack/pxdImageViewer): opening
   an image shows it in its own window with deep, high-quality zoom (to 51,200%, crisp pixels and a pixel grid when far
   in), stepping through the tab's images in its sort order (several selected: just those), and slideshows with
   adjustable speed, shuffle, cross-fade and an option to keep the zoom between images. The tab selects whichever image
   is on screen. Right-click: Slideshow from here / Slideshow (folders); command palette: Slideshow of this folder.
   Settings > Behaviour > "Open images in the built-in viewer" switches back to Windows' default app. The viewer's
-  preferences are shared with the standalone app (%APPDATA%\PaxImageViewer). Build needs PaxImageViewer cloned beside
+  preferences are shared with the standalone app (%APPDATA%\pxdImageViewer). Build needs pxdImageViewer cloned beside
   this repo.
 
 ## 1.3.8 (2026-11-05)
-- Self-update: once a day, a few seconds after start-up, PAX Commander checks GitHub's latest release. If there's a
+- Self-update: once a day, a few seconds after start-up, pxd Commander checks GitHub's latest release. If there's a
   newer version a card shows what's new with Update now / Later / Skip this version; nothing downloads until you
   click Update now. The installer is checked against the release's .sha256 file (a mismatch is thrown away), then
   an installed copy updates quietly in place, keeping your shortcut and folder-menu choices, and reopens. Portable
@@ -52,13 +65,13 @@ Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry he
   shows the script's lines (PS> first, >> after). Up/Down move within a multi-line command instead of history.
 
 ## 1.3.2 (2026-11-05)
-- Popped-out terminal windows are titled "PAX Terminal" (title bar and taskbar) instead of "PAX Commander".
+- Popped-out terminal windows are titled "pxd Terminal" (title bar and taskbar) instead of "pxd Commander".
 
 ## 1.3.1 (2026-11-05)
 - Windows reopen where you left them: the main window and popped-out terminals remember their size, position and
   maximized state. It's saved as you move or resize (not only on a clean exit), and a position that's no longer on
   any screen (monitor unplugged) falls back to centred.
-- Popped-out terminals use the app's own title bar: the PAX Commander mark, what the terminal is and its folder, and
+- Popped-out terminals use the app's own title bar: the pxd Commander mark, what the terminal is and its folder, and
   the same minimize / maximize / close buttons (drag empty space to move, double-click to maximize).
 
 ## 1.3.0 (2026-11-05)
@@ -80,7 +93,7 @@ Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry he
 - Themes: Dark (the original), Light, or Match Windows (follows Windows' light/dark setting live). Switch in
   Settings ▸ Look, or with Ctrl+Alt+L / the "Light / dark theme" command. Everything recolors instantly: panes,
   lists, menus, tooltips, dialogs, previews, the terminal, and code colors (VS Code's light set in Light).
-- New "Arctic" app icon: ice-white folder, blue rim and sheet, "PAX_" in bright-over-deep blue. The icon no
+- New "Arctic" app icon: ice-white folder, blue rim and sheet, "pxd_" in bright-over-deep blue. The icon no
   longer follows the accent color.
 - Terminal header: the Windows Terminal button is shorter and the title shortens itself in narrow panes, so nothing
   overlaps.
@@ -110,7 +123,7 @@ Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry he
   a command palette (Ctrl+K), and undo/redo for file operations.
 - Background file-operation queue with conflict handling, Recycle Bin, and Windows shell context menus and icons.
 - Mounted ISO/VHD detection and unmounting; drive list or compact drive tiles in the sidebar.
-- Accent color picker (baby blue by default); custom title bar; the "PAX_" folder icon.
+- Accent color picker (baby blue by default); custom title bar; the "pxd_" folder icon.
 - FTP, FTPS and SFTP connections with saved logins in Windows Credential Manager, host key and certificate checks,
   and transfers between this PC and servers or between servers.
 - Docked terminal per tab: SSH on servers, PowerShell on this PC. The terminal and the file view follow each
@@ -118,4 +131,4 @@ Bump `<Version>` in `PaxCommander.csproj` for every release, and add an entry he
 - Microsoft 365 admin PowerShell connections (Exchange Online, Graph, Teams, SharePoint, Security & Compliance,
   Azure) with browser, device-code, certificate or saved-password sign-in, and a "Sign-in code" link button.
 - Code previews colored by language with line numbers; minified JSON and XML are laid out. Auto-preview mode.
-- Installer: paxcomm-setup.exe (self-contained, per-user, no admin needed), with silent install and uninstall.
+- Installer: pxdcomm-setup.exe (self-contained, per-user, no admin needed), with silent install and uninstall.

@@ -1,10 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using PaxCommander.Core;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Core;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>Every command with its shortcut, the window-level key handling, and the "Go anywhere" palette.</summary>
 public sealed partial class MainWindow
@@ -154,7 +154,7 @@ public sealed partial class MainWindow
     {
         _lastModifiers = e.KeyModifiers;
         // Dialogs, Quick Look and the palette own the keyboard while they're up.
-        if (Dialogs.IsOpen || CommandPalette.Current is not null || PaxCommander.Views.QuickLook.Current is not null) return;
+        if (Dialogs.IsOpen || CommandPalette.Current is not null || pxdCommander.Views.QuickLook.Current is not null) return;
 
         var focused = FocusManager?.GetFocusedElement();
         var inText = focused is TextBox;

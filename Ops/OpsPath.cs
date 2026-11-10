@@ -1,4 +1,4 @@
-namespace PaxCommander.Ops;
+namespace pxdCommander.Ops;
 
 /// <summary>What an entry is, for the engine's purposes. File symlinks count as files (copying them copies the target's content).</summary>
 internal enum OpsItemKind { File, Directory, Link }

@@ -1,6 +1,6 @@
 using System.IO.Compression;
 
-namespace PaxCommander.Ops;
+namespace pxdCommander.Ops;
 
 /// <summary>
 /// Compress to a .zip: top-level items become entry roots, folders are recursed (empty ones get a directory entry),

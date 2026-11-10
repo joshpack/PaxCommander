@@ -2,7 +2,7 @@ using System.IO.Enumeration;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace PaxCommander.Search;
+namespace pxdCommander.Search;
 
 /// <summary>
 /// A parsed query. Plain words must all appear in the name (case-insensitive, any order); "quoted text" is one term;

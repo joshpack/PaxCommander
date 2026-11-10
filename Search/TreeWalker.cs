@@ -1,6 +1,6 @@
 using System.IO.Enumeration;
 
-namespace PaxCommander.Search;
+namespace pxdCommander.Search;
 
 /// <summary>
 /// One worker's view of the walk. Each worker thread gets its own instance, so per-worker buffers and counters
@@ -52,7 +52,7 @@ internal static class TreeWalker
 
     private static void WorkerLoop(WorkQueue queue, WalkWorker worker, string root, CancellationToken ct)
     {
-        Thread.CurrentThread.Name ??= "PaxCommander walk";
+        Thread.CurrentThread.Name ??= "pxdCommander walk";
         var subdirectories = new List<string>();
         try
         {

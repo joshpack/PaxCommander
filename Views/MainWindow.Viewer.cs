@@ -1,10 +1,10 @@
-using PaxCommander.Core;
-using PaxImageViewer;
+using pxdCommander.Core;
+using pxdImageViewer;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
-/// Images open in PAX Image Viewer (the same viewer as the standalone app, in its own window): deep zoom, stepping
+/// Images open in pxd Image Viewer (the same viewer as the standalone app, in its own window): deep zoom, stepping
 /// through the folder in this tab's order, and slideshows. The tab follows along, selecting the image on screen.
 /// </summary>
 public sealed partial class MainWindow
@@ -20,7 +20,7 @@ public sealed partial class MainWindow
         if (_viewerReady) return;
         _viewerReady = true;
         // Tests run against a throwaway data folder; normally the viewer shares its preferences with the standalone app.
-        if (Environment.GetEnvironmentVariable("PAXCMD_DATA") is { Length: > 0 })
+        if (Environment.GetEnvironmentVariable("PXDCMD_DATA") is { Length: > 0 })
             ViewerSettings.FilePath = AppPaths.File("imageviewer.json");
         ViewerTheme.SetAccent(AccentTheme.Accent);
     }

@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 /// <summary>
 /// The local network, the way Explorer shows it: computers (from the shell's Network folder, which uses the same

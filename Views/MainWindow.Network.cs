@@ -1,8 +1,8 @@
 using Avalonia.Controls;
-using PaxCommander.Core;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Core;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>The local network: mapping and disconnecting network drives.</summary>
 public sealed partial class MainWindow

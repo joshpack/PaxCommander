@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Text;
 
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 /// <summary>
 /// File lists on the Windows clipboard in Explorer's format. Call on the UI thread: the clipboard owner is a helper

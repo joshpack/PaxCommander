@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace PaxCommander.Search;
+namespace pxdCommander.Search;
 
 /// <summary>
 /// Explorer's name order (the semantics of Windows' StrCmpLogicalW), in portable managed code: case-insensitive, digit runs

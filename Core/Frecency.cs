@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>
 /// Remembers visited folders ranked by how often and how recently they were opened (the zoxide idea), so "Go to" can

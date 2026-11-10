@@ -1,7 +1,7 @@
-using PaxCommander.Core;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Core;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>Mounting and unmounting disc images (ISO) and virtual disks.</summary>
 public sealed partial class MainWindow
@@ -88,7 +88,7 @@ public sealed partial class MainWindow
     private void OnAccentChanged()
     {
         Icon = AppIcon.CreateWindowIcon();
-        PaxImageViewer.ViewerTheme.SetAccent(AccentTheme.Accent);
+        pxdImageViewer.ViewerTheme.SetAccent(AccentTheme.Accent);
         foreach (var p in _panes)
             foreach (var t in p.Tabs) t.InvalidateRows();
         _sidebar.Rebuild();

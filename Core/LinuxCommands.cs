@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using PaxCommander.Core.Remote;
+using pxdCommander.Core.Remote;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>
 /// The other direction from <see cref="WinCommands"/>: Linux habits in the local PowerShell terminal (ls -la, grep,

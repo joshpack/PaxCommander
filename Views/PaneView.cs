@@ -5,9 +5,9 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>One side of the window: a strip of tabs, the view-mode switch and the active tab's folder view.</summary>
 public sealed class PaneView : Border

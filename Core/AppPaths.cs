@@ -1,13 +1,13 @@
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>Where the app keeps its own data (settings, history, labels, logs).</summary>
 public static class AppPaths
 {
-    /// <summary>%APPDATA%\PaxCommander, or PAXCMD_DATA when set (tests run against a throwaway folder).</summary>
+    /// <summary>%APPDATA%\pxdCommander, or PXDCMD_DATA when set (tests run against a throwaway folder).</summary>
     public static readonly string Data =
-        Environment.GetEnvironmentVariable("PAXCMD_DATA") is { Length: > 0 } custom
+        Environment.GetEnvironmentVariable("PXDCMD_DATA") is { Length: > 0 } custom
             ? custom
-            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PaxCommander");
+            : Migration.DataFolder(); // moves the folder from before the rename on first use, before anything reads it
 
     public static string File(string name) => Path.Combine(Data, name);
 }

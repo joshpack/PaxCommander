@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PaxCommander.Search;
+namespace pxdCommander.Search;
 
 /// <summary>Value parsers for size:, modified: and created:. All of them report failure instead of throwing.</summary>
 internal static class QueryFilterParsers

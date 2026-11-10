@@ -5,10 +5,10 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PaxCommander.Core;
-using PaxCommander.Ops;
+using pxdCommander.Core;
+using pxdCommander.Ops;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 public enum ToastKind { Info, Success, Error }
 

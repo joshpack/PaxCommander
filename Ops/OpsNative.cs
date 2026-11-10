@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-namespace PaxCommander.Ops;
+namespace pxdCommander.Ops;
 
 /// <summary>Win32 calls used by the engine. Only reached behind OperatingSystem.IsWindows() checks.</summary>
 internal static class OpsNative

@@ -1,4 +1,4 @@
-namespace PaxCommander.Ops;
+namespace pxdCommander.Ops;
 
 /// <summary>
 /// Permanent delete: files (read-only cleared) and folders bottom-up. Junctions and symlinks are removed as links —

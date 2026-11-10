@@ -2,11 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using PaxCommander.Core;
-using PaxCommander.Core.Remote;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Core;
+using pxdCommander.Core.Remote;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>Right-click menus: items, folder background, tabs, panes, sidebar — plus the native Windows menu.</summary>
 public sealed partial class MainWindow
@@ -107,7 +107,7 @@ public sealed partial class MainWindow
         {
             var images = items.Where(IsViewableImage).ToList();
             if (!AppSettings.Current.OpenImagesInViewer)
-                yield return Item("View in PAX Image Viewer", "image", () => ViewImages(view, images));
+                yield return Item("View in pxd Image Viewer", "image", () => ViewImages(view, images));
             yield return Item(images.Count > 1 ? "Slideshow of these images" : "Slideshow from here", "play", () => ViewImages(view, images, slideshow: true));
         }
         else if (single && first.IsDirectory && !first.IsDrive)

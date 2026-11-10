@@ -1,6 +1,6 @@
-using PaxCommander.Ops;
+using pxdCommander.Ops;
 
-namespace PaxCommander.Core.Remote;
+namespace pxdCommander.Core.Remote;
 
 /// <summary>What the operations panel shows for any job (local engine jobs and remote transfers alike).</summary>
 public interface IJobView
@@ -379,7 +379,7 @@ public static class RemoteTransfers
             return;
         }
         // Server to server: through a temporary file on this PC.
-        var temp = Path.Combine(Path.GetTempPath(), "PaxCommander", "relay-" + Guid.NewGuid().ToString("N"));
+        var temp = Path.Combine(Path.GetTempPath(), "pxdCommander", "relay-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(Path.GetDirectoryName(temp)!);
         try
         {

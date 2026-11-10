@@ -1,4 +1,4 @@
-namespace PaxCommander.Search;
+namespace pxdCommander.Search;
 
 /// <summary>One search result. Size is 0 for folders; times are UTC.</summary>
 public sealed record SearchHit(

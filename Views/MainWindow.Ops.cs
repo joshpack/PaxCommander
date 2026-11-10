@@ -1,11 +1,11 @@
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Media.Imaging;
-using PaxCommander.Core;
-using PaxCommander.Ops;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Core;
+using pxdCommander.Ops;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>File operations: clipboard, transfers, delete, rename, new items, archives — all undoable where possible.</summary>
 public sealed partial class MainWindow
@@ -232,7 +232,7 @@ public sealed partial class MainWindow
     {
         if (string.Equals(from, to, StringComparison.OrdinalIgnoreCase) && from != to)
         {
-            var temp = from + ".pax-" + Guid.NewGuid().ToString("N")[..6];
+            var temp = from + ".pxd-" + Guid.NewGuid().ToString("N")[..6];
             if (isDir) Directory.Move(from, temp);
             else File.Move(from, temp);
             from = temp;
@@ -275,7 +275,7 @@ public sealed partial class MainWindow
             {
                 try
                 {
-                    var temp = from + ".pax-" + Guid.NewGuid().ToString("N")[..8];
+                    var temp = from + ".pxd-" + Guid.NewGuid().ToString("N")[..8];
                     MovePath(from, temp, isDir);
                     temps.Add((temp, to, from, isDir));
                 }

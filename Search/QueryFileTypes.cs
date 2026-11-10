@@ -1,6 +1,6 @@
 using System.Collections.Frozen;
 
-namespace PaxCommander.Search;
+namespace pxdCommander.Search;
 
 /// <summary>Extension groups behind <c>type:</c>, and the text/binary hints that <c>content:</c> uses.</summary>
 internal static class QueryFileTypes

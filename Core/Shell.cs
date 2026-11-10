@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>Opening things with the operating system: default apps, Open with, properties, terminals, Explorer.</summary>
 public static class Shell

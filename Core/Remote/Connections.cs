@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Core.Remote;
+namespace pxdCommander.Core.Remote;
 
 public enum RemoteProtocol { Sftp, Ftps, Ftp }
 

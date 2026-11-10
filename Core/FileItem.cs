@@ -1,6 +1,6 @@
 using Avalonia.Media;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 public enum ItemKind { File, Folder, Drive }
 

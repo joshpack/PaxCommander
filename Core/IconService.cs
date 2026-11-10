@@ -5,10 +5,10 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Platform.Win32;
 
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>
 /// Supplies icons and thumbnails lazily: rows ask when they are realized, get a generic icon at once, and the real

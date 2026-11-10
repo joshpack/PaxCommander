@@ -5,10 +5,10 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PaxCommander.Core;
-using PaxCommander.Search;
+using pxdCommander.Core;
+using pxdCommander.Search;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>What a folder tab needs from the main window.</summary>
 public interface IAppHost

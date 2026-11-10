@@ -7,9 +7,9 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>A run of tiles that share one row of the grid.</summary>
 public sealed record TileRowData(int Start, int Count, int Row);

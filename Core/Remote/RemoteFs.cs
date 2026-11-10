@@ -3,7 +3,7 @@ using FluentFTP;
 using Renci.SshNet;
 using Renci.SshNet.Common;
 
-namespace PaxCommander.Core.Remote;
+namespace pxdCommander.Core.Remote;
 
 public sealed record RemoteEntry(string Path, string Name, bool IsDirectory, long Size, DateTime ModifiedUtc, bool IsLink);
 
@@ -370,7 +370,7 @@ public static class RemoteSessions
     public static async Task<string> DownloadToTempAsync(string path, CancellationToken ct)
     {
         if (!RemotePath.TryParse(path, out var c, out var remote) || c is null) throw new IOException("Unknown connection.");
-        var folder = Path.Combine(Path.GetTempPath(), "PaxCommander", "remote", c.Id, Path.GetDirectoryName(remote.TrimStart('/'))?.Replace('/', '\\') ?? "");
+        var folder = Path.Combine(Path.GetTempPath(), "pxdCommander", "remote", c.Id, Path.GetDirectoryName(remote.TrimStart('/'))?.Replace('/', '\\') ?? "");
         Directory.CreateDirectory(folder);
         var local = Path.Combine(folder, RemotePath.Name(path));
         var fs = await GetAsync(c, ct);

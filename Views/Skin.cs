@@ -1,9 +1,9 @@
 using System.Globalization;
 using Avalonia;
 using Avalonia.Media;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// Brushes, pens and fonts for the custom-drawn lists (kept static so thousands of rows share them). The accent-tinted

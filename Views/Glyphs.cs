@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Media;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>Line icons on a 24×24 grid, drawn with round strokes in the inherited foreground colour.</summary>
 public static class Glyphs

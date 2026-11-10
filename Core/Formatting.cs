@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 public static class Formatting
 {

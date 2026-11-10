@@ -5,7 +5,7 @@ using System.Runtime.Versioning;
 using System.Security.Principal;
 using System.Text;
 
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 [SupportedOSPlatform("windows")]
 public static class RecycleBin

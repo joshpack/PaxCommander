@@ -1,4 +1,4 @@
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>One reversible action. <see cref="Redo"/> is optional (some actions can only be undone).</summary>
 public sealed record UndoEntry(string Label, Func<Task> Undo, Func<Task>? Redo = null);

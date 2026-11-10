@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PaxCommander.Core.Remote;
+namespace pxdCommander.Core.Remote;
 
 /// <summary>
 /// Lets Windows habits work in the SSH terminal: common cmd commands are rewritten to their Linux equivalents before

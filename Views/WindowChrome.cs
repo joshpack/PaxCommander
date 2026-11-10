@@ -4,12 +4,12 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
-/// PAX Commander's own title bar, shared by every window: the system one is removed, empty space in the bar drags the
+/// pxd Commander's own title bar, shared by every window: the system one is removed, empty space in the bar drags the
 /// window (with Windows snap), double-click maximizes, and minimize / maximize / close sit at the right.
 /// </summary>
 public static class WindowChrome

@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
-using PaxCommander.Core.Remote;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Core.Remote;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 public sealed record Crumb(string Name, string Path);
 

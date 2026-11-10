@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 /// <summary>
 /// A hidden top-level window per thread. It owns native context menus (TrackPopupMenuEx needs an owner window on the
@@ -12,7 +12,7 @@ namespace PaxCommander.Platform.Win32;
 [SupportedOSPlatform("windows")]
 internal static class ShellHelperWindow
 {
-    private const string ClassName = "PaxCommander.ShellHelperWindow";
+    private const string ClassName = "pxdCommander.ShellHelperWindow";
 
     // Rooted for the life of the process: the registered window class keeps calling through this delegate.
     private static readonly NativeMethods.WndProc s_wndProc = WndProc;
@@ -36,7 +36,7 @@ internal static class ShellHelperWindow
             return t_hwnd;
 
         EnsureClassRegistered();
-        IntPtr hwnd = NativeMethods.CreateWindowExW(NativeMethods.WS_EX_TOOLWINDOW, ClassName, "PaxCommander shell helper",
+        IntPtr hwnd = NativeMethods.CreateWindowExW(NativeMethods.WS_EX_TOOLWINDOW, ClassName, "pxdCommander shell helper",
             NativeMethods.WS_POPUP, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, NativeMethods.GetModuleHandleW(null), IntPtr.Zero);
         if (hwnd == IntPtr.Zero)
             throw new Win32Exception(Marshal.GetLastWin32Error(), "Could not create the shell helper window.");

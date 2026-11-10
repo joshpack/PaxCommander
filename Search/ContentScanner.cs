@@ -1,7 +1,7 @@
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 
-namespace PaxCommander.Search;
+namespace pxdCommander.Search;
 
 /// <summary>
 /// Streams one file at a time looking for content: needles (case-insensitive). Holds its own buffers, so each search

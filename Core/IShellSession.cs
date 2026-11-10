@@ -1,4 +1,4 @@
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>
 /// A running shell behind the docked terminal: an SSH shell on a server, or PowerShell on this PC. Output arrives on

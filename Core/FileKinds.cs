@@ -1,4 +1,4 @@
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 public enum FileKind { Folder, Drive, Image, Video, Audio, Document, Text, Code, Archive, Executable, Other }
 

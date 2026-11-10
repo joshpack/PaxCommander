@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>
 /// PowerShell on this PC for the docked terminal (pwsh when installed, else Windows PowerShell). Commands go in on

@@ -1,12 +1,12 @@
 using System.Runtime.Versioning;
 
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 /// <summary>Dedicated STA threads for shell COM calls (icons, thumbnails, properties).</summary>
 [SupportedOSPlatform("windows")]
 public static class ShellThread
 {
-    private static readonly StaWorkerPool s_pool = new("PaxCommander shell", threadCount: 2, lifo: true);
+    private static readonly StaWorkerPool s_pool = new("pxdCommander shell", threadCount: 2, lifo: true);
 
     /// <summary>
     /// Runs <paramref name="work"/> on an STA worker. Newest requests run first (LIFO) so whatever the user just scrolled to
@@ -23,7 +23,7 @@ public static class ShellThread
 internal static class StaInvoker
 {
     // A thread of its own, so a long Recycle never takes a ShellThread worker away from icons and thumbnails.
-    private static readonly StaWorkerPool s_pool = new("PaxCommander shell operations", threadCount: 1, lifo: false);
+    private static readonly StaWorkerPool s_pool = new("pxdCommander shell operations", threadCount: 1, lifo: false);
 
     internal static T Invoke<T>(Func<T> work)
     {

@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 /// <summary>
 /// Secrets in Windows Credential Manager ("Generic credentials"): encrypted by Windows for this user account and never
@@ -9,7 +9,7 @@ namespace PaxCommander.Platform.Win32;
 /// </summary>
 public static class CredentialStore
 {
-    private const string Prefix = "PaxCommander:";
+    private const string Prefix = "pxdCommander:";
 
     public static bool IsAvailable => OperatingSystem.IsWindows();
 
@@ -28,7 +28,7 @@ public static class CredentialStore
                 CredentialBlob = handle.AddrOfPinnedObject(),
                 Persist = 2, // CRED_PERSIST_LOCAL_MACHINE: survives sign-out, still only readable by this user
                 UserName = user,
-                Comment = "PAX Commander connection",
+                Comment = "pxd Commander connection",
             };
             return CredWriteW(ref cred, 0);
         }
@@ -41,12 +41,23 @@ public static class CredentialStore
 
     public static string? Read(string key)
     {
-        if (!IsAvailable || !CredReadW(Prefix + key, 1, 0, out var ptr)) return null;
+        if (!IsAvailable) return null;
+        if (ReadRaw(Prefix + key) is { } found) return found.Secret;
+
+        // Saved by a version from before the rename: move it to the new name the first time it's needed.
+        if (ReadRaw(Core.Migration.FormerCredentialPrefix + key) is not { } former) return null;
+        if (Write(key, former.User ?? "", former.Secret)) CredDeleteW(Core.Migration.FormerCredentialPrefix + key, 1, 0);
+        return former.Secret;
+    }
+
+    private static (string? User, string Secret)? ReadRaw(string target)
+    {
+        if (!CredReadW(target, 1, 0, out var ptr)) return null;
         try
         {
             var cred = Marshal.PtrToStructure<Credential>(ptr);
-            if (cred.CredentialBlob == IntPtr.Zero || cred.CredentialBlobSize == 0) return "";
-            return Marshal.PtrToStringUni(cred.CredentialBlob, cred.CredentialBlobSize / 2);
+            if (cred.CredentialBlob == IntPtr.Zero || cred.CredentialBlobSize == 0) return (cred.UserName, "");
+            return (cred.UserName, Marshal.PtrToStringUni(cred.CredentialBlob, cred.CredentialBlobSize / 2));
         }
         finally
         {
@@ -56,7 +67,9 @@ public static class CredentialStore
 
     public static void Delete(string key)
     {
-        if (IsAvailable) CredDeleteW(Prefix + key, 1, 0);
+        if (!IsAvailable) return;
+        CredDeleteW(Prefix + key, 1, 0);
+        CredDeleteW(Core.Migration.FormerCredentialPrefix + key, 1, 0); // one the rename hasn't moved yet
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

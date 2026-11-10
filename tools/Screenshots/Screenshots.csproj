@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Renders the README screenshots (docs/screenshots/*.png) without a window: Avalonia.Headless with real Skia drawing,
+    against sample folders it creates and removes again. See README "Build from source".
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>pxdCommander.Screenshots</RootNamespace>
+    <AssemblyName>pxdCommander.Screenshots</AssemblyName>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Headless" Version="12.1.4" />
+    <ProjectReference Include="..\..\pxdCommander.csproj" />
+  </ItemGroup>
+
+</Project>

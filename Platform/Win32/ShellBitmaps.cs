@@ -1,6 +1,6 @@
 using System.Runtime.Versioning;
 
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 /// <summary>Turns GDI bitmaps and icons into <see cref="RawImage"/> pixels.</summary>
 [SupportedOSPlatform("windows")]

@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>Saved Microsoft 365 admin PowerShell connections: connect in the docked terminal, edit, delete.</summary>
 public sealed partial class MainWindow

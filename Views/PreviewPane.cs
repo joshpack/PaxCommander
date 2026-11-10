@@ -8,10 +8,10 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using PaxCommander.Core;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Core;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// Details pane for the focused item: a visual preview (image, text/code, archive listing, Explorer thumbnail), the

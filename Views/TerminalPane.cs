@@ -7,10 +7,10 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PaxCommander.Core;
-using PaxCommander.Core.Remote;
+using pxdCommander.Core;
+using pxdCommander.Core.Remote;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// The SSH terminal docked under a server's file view. Line-based: you type into the input row and Enter sends it, so

@@ -1,4 +1,4 @@
-namespace PaxCommander.Ops;
+namespace pxdCommander.Ops;
 
 /// <summary>
 /// One queued operation. Live properties are safe to read from any thread (the UI polls them a few times a second;

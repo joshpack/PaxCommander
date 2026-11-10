@@ -6,9 +6,9 @@ using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>What an item view needs from the folder tab that owns it.</summary>
 public interface IItemViewHost
@@ -32,7 +32,7 @@ public interface IItemViewHost
 /// </summary>
 public abstract class ItemViewBase : UserControl
 {
-    public static readonly DataFormat<string[]> PathsFormat = DataFormat.CreateInProcessFormat<string[]>("PaxCommander.Paths");
+    public static readonly DataFormat<string[]> PathsFormat = DataFormat.CreateInProcessFormat<string[]>("pxdCommander.Paths");
 
     protected readonly Grid Root = new();
     protected readonly Canvas Overlay = new() { ClipToBounds = true };

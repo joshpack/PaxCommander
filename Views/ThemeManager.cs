@@ -1,9 +1,9 @@
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// Light and dark themes. One palette per theme feeds the app-wide style resources (App.axaml reads them as

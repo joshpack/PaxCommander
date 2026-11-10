@@ -3,10 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
-using PaxCommander.Core;
-using PaxCommander.Core.Remote;
+using pxdCommander.Core;
+using pxdCommander.Core.Remote;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>Add or edit a saved SFTP/FTP connection, with a Test button. Secrets go to Windows Credential Manager.</summary>
 public static class ConnectionDialog
@@ -163,7 +163,7 @@ public static class ConnectionDialog
                     Field("START FOLDER", start),
                     new TextBlock
                     {
-                        Text = "Passwords are kept in Windows Credential Manager, encrypted for your Windows account — never in PAX Commander's own files. SSH servers are checked against their saved fingerprint on every connect.",
+                        Text = "Passwords are kept in Windows Credential Manager, encrypted for your Windows account — never in pxd Commander's own files. SSH servers are checked against their saved fingerprint on every connect.",
                         FontSize = 11.5,
                         Foreground = Skin.Faint,
                         TextWrapping = TextWrapping.Wrap,

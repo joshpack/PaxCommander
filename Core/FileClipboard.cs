@@ -1,9 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>
 /// Cut/copy/paste of files through the real system clipboard, so it interoperates with Explorer both ways.

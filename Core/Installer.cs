@@ -4,26 +4,44 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using Microsoft.Win32;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>
-/// PAX Commander installs itself: the single-file build named paxcomm-setup.exe copies itself to
-/// %LOCALAPPDATA%\Programs\PAX Commander, adds Start menu / desktop shortcuts, an "Open in PAX Commander" folder
+/// pxd Commander installs itself: the single-file build named pxdcomm-setup.exe copies itself to
+/// %LOCALAPPDATA%\Programs\pxd Commander, adds Start menu / desktop shortcuts, an "Open in pxd Commander" folder
 /// menu entry and an Apps &amp; features entry. Per-user, so no administrator rights are needed, and self-contained,
 /// so the PC needs no .NET.
 /// </summary>
 public static class Installer
 {
-    public const string AppName = "PAX Commander";
-    public const string AppUserModelId = "PAX.Commander";
-    private const string UninstallKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\PaxCommander";
-    private const string ExeName = "PaxCommander.exe";
+    public const string AppName = "pxd Commander";
+    public const string AppUserModelId = "pxd.Commander";
+    private const string UninstallKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\pxdCommander";
+    private const string ExeName = "pxdCommander.exe";
     private static readonly string[] MenuKeys =
     [
-        @"Software\Classes\Directory\shell\PaxCommander",
-        @"Software\Classes\Directory\Background\shell\PaxCommander",
-        @"Software\Classes\Drive\shell\PaxCommander",
+        @"Software\Classes\Directory\shell\pxdCommander",
+        @"Software\Classes\Directory\Background\shell\pxdCommander",
+        @"Software\Classes\Drive\shell\pxdCommander",
     ];
+
+    /// <summary>Registry root for everything the installer writes. The self-test points it at a private hive file.</summary>
+    internal static RegistryKey Root { get; set; } = Registry.CurrentUser;
+
+    /// <summary>Set by the self-test: shortcut folders and the registry are throwaway copies, nothing is announced to the shell.</summary>
+    internal static bool Testing { get; set; }
+
+    internal static string? TestStartMenuFolder { get; set; }
+    internal static string? TestDesktopFolder { get; set; }
+
+    public static string StartMenuFolder => TestStartMenuFolder ?? Environment.GetFolderPath(Environment.SpecialFolder.Programs);
+    public static string DesktopFolder => TestDesktopFolder ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
+    /// <summary>
+    /// The folder an install goes to when none is given: where it's installed now, else where the version from before
+    /// the rename was installed (its default folder name becomes the new one), else the default.
+    /// </summary>
+    public static string SuggestedFolder => InstalledFolder ?? Migration.MapFolder(Migration.FormerInstalledFolder) ?? DefaultFolder;
 
     public static string Version =>
         typeof(Installer).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0]
@@ -37,7 +55,7 @@ public static class Installer
     {
         get
         {
-            using var key = Registry.CurrentUser.OpenSubKey(UninstallKey);
+            using var key = Root.OpenSubKey(UninstallKey);
             return key?.GetValue("InstallLocation") as string is { Length: > 0 } f && File.Exists(Path.Combine(f, ExeName)) ? f : null;
         }
     }
@@ -46,28 +64,29 @@ public static class Installer
     {
         get
         {
-            using var key = Registry.CurrentUser.OpenSubKey(UninstallKey);
+            using var key = Root.OpenSubKey(UninstallKey);
             return key?.GetValue("DisplayVersion") as string;
         }
     }
 
-    /// <summary>A copy named like a setup program (paxcomm-setup.exe) runs the installer instead of the app.</summary>
+    /// <summary>A copy named like a setup program (pxdcomm-setup.exe) runs the installer instead of the app.</summary>
     public static bool LooksLikeSetup() =>
         Path.GetFileNameWithoutExtension(Environment.ProcessPath ?? "").Contains("setup", StringComparison.OrdinalIgnoreCase);
 
     private static string StartMenuShortcut =>
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), AppName + ".lnk");
+        Path.Combine(StartMenuFolder, AppName + ".lnk");
 
     private static string DesktopShortcut =>
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), AppName + ".lnk");
+        Path.Combine(DesktopFolder, AppName + ".lnk");
 
     public static async Task<string> InstallAsync(string folder, bool desktop, bool folderMenu, Action<string> status)
     {
         var source = Environment.ProcessPath ?? throw new InvalidOperationException("Can't find the setup program.");
         var exe = Path.Combine(folder, ExeName);
 
-        status("Closing PAX Commander if it's running…");
+        status("Closing pxd Commander if it's running…");
         await CloseRunningAsync(exe);
+        if (Migration.FormerInstalledFolder is { } former) await CloseRunningAsync(Path.Combine(former, Migration.FormerExeName));
 
         status("Copying files…");
         Directory.CreateDirectory(folder);
@@ -82,11 +101,11 @@ public static class Installer
         else TryDelete(DesktopShortcut);
 
         status("Registering…");
-        using (var key = Registry.CurrentUser.CreateSubKey(UninstallKey))
+        using (var key = Root.CreateSubKey(UninstallKey))
         {
             key.SetValue("DisplayName", AppName);
             key.SetValue("DisplayVersion", Version);
-            key.SetValue("Publisher", "PAX");
+            key.SetValue("Publisher", "pxd");
             key.SetValue("DisplayIcon", exe + ",0");
             key.SetValue("InstallLocation", folder);
             key.SetValue("UninstallString", $"\"{exe}\" --uninstall");
@@ -101,8 +120,8 @@ public static class Installer
         {
             foreach (var path in MenuKeys)
             {
-                using var key = Registry.CurrentUser.CreateSubKey(path);
-                key.SetValue("MUIVerb", "Open in PAX Commander");
+                using var key = Root.CreateSubKey(path);
+                key.SetValue("MUIVerb", "Open in pxd Commander");
                 key.SetValue("Icon", exe + ",0");
                 using var cmd = key.CreateSubKey("command");
                 cmd.SetValue("", $"\"{exe}\" \"%V\"");
@@ -110,7 +129,8 @@ public static class Installer
         }
         else RemoveFolderMenu();
 
-        SHChangeNotify(0x08000000, 0, IntPtr.Zero, IntPtr.Zero); // SHCNE_ASSOCCHANGED: refresh icons and menus
+        Migration.RemoveFormerInstall(folder);
+        if (!Testing) SHChangeNotify(0x08000000, 0, IntPtr.Zero, IntPtr.Zero); // SHCNE_ASSOCCHANGED: refresh icons and menus
         status("Done");
         return exe;
     }
@@ -122,7 +142,8 @@ public static class Installer
         TryDelete(StartMenuShortcut);
         TryDelete(DesktopShortcut);
         RemoveFolderMenu();
-        Registry.CurrentUser.DeleteSubKeyTree(UninstallKey, throwOnMissingSubKey: false);
+        Root.DeleteSubKeyTree(UninstallKey, throwOnMissingSubKey: false);
+        Migration.RemoveFormerInstall(folder); // leftovers of the version from before the rename, if any
 
         if (removeSettings)
         {
@@ -143,17 +164,18 @@ public static class Installer
             };
             Process.Start(psi);
         }
-        SHChangeNotify(0x08000000, 0, IntPtr.Zero, IntPtr.Zero);
+        if (!Testing) SHChangeNotify(0x08000000, 0, IntPtr.Zero, IntPtr.Zero);
     }
 
-    public static bool HasDesktopShortcut => File.Exists(DesktopShortcut);
+    /// <summary>Includes the shortcut the version from before the rename made, so an update keeps the choice.</summary>
+    public static bool HasDesktopShortcut => File.Exists(DesktopShortcut) || Migration.FormerDesktopShortcut;
 
     public static bool HasFolderMenu
     {
         get
         {
-            using var key = Registry.CurrentUser.OpenSubKey(MenuKeys[0]);
-            return key is not null;
+            using var key = Root.OpenSubKey(MenuKeys[0]);
+            return key is not null || Migration.FormerFolderMenu;
         }
     }
 
@@ -185,13 +207,13 @@ public static class Installer
 
     private static void RemoveFolderMenu()
     {
-        foreach (var path in MenuKeys) Registry.CurrentUser.DeleteSubKeyTree(path, throwOnMissingSubKey: false);
+        foreach (var path in MenuKeys) Root.DeleteSubKeyTree(path, throwOnMissingSubKey: false);
     }
 
     private static async Task CloseRunningAsync(string exe)
     {
         var me = Environment.ProcessId;
-        foreach (var p in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(ExeName)))
+        foreach (var p in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(exe)))
         {
             try
             {

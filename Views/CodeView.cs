@@ -8,7 +8,7 @@ using Avalonia.Controls.Documents;
 using Avalonia.Layout;
 using Avalonia.Media;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// Source code in the preview: coloured by a small per-language tokenizer, with line numbers, tabs kept as indents

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 /// <summary>One suggestion for the terminal: the command, a short description, and where it came from.</summary>
 public sealed record CommandSuggestion(string Command, string Description, string Source);
@@ -194,7 +194,7 @@ public static partial class CommandLibrary
     /// <summary>Anything that looks like it carries a secret is never written down.</summary>
     public static bool LooksSecret(string line) => SecretPattern().IsMatch(line);
 
-    [GeneratedRegex(@"(?i)(pass(word|wd)?|secret|token|api[-_]?key|client[-_]?secret)\s*[=:]|-(pass(word)?|secret|token|api[-_]?key|client[-_]?secret|pat)\b|-AsPlainText|ConvertTo-SecureString|\$__pax")]
+    [GeneratedRegex(@"(?i)(pass(word|wd)?|secret|token|api[-_]?key|client[-_]?secret)\s*[=:]|-(pass(word)?|secret|token|api[-_]?key|client[-_]?secret|pat)\b|-AsPlainText|ConvertTo-SecureString|\$__pxd")]
     private static partial Regex SecretPattern();
 
     /// <summary>Remembers a command run in a terminal of this kind ("powershell" or "ssh").</summary>

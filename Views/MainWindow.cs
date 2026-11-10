@@ -7,11 +7,11 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using PaxCommander.Core;
-using PaxCommander.Ops;
-using PaxCommander.Platform.Win32;
+using pxdCommander.Core;
+using pxdCommander.Ops;
+using pxdCommander.Platform.Win32;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// The window: top bar, sidebar, one or two panes of tabs, preview pane and the operations queue, plus the overlay
@@ -41,7 +41,7 @@ public sealed partial class MainWindow : Window, IAppHost
     public MainWindow(IReadOnlyList<string> startPaths, bool restoreSession)
     {
         _primary = Interlocked.Increment(ref _windowCount) == 1;
-        Title = "PAX Commander";
+        Title = "pxd Commander";
         Icon = AppIcon.CreateWindowIcon();
         MinWidth = 760;
         MinHeight = 480;
@@ -66,7 +66,7 @@ public sealed partial class MainWindow : Window, IAppHost
             Spacing = 9,
             VerticalAlignment = VerticalAlignment.Center,
             Margin = new Thickness(14, 0, 18, 0),
-            Children = { mark, new TextBlock { Text = "PAX Commander", Classes = { "neon" }, FontWeight = FontWeight.Bold, FontSize = 14.5, VerticalAlignment = VerticalAlignment.Center } },
+            Children = { mark, new TextBlock { Text = "pxd Commander", Classes = { "neon" }, FontWeight = FontWeight.Bold, FontSize = 14.5, VerticalAlignment = VerticalAlignment.Center } },
         };
         var anywhere = new Button
         {
@@ -401,7 +401,7 @@ public sealed partial class MainWindow : Window, IAppHost
     private void OnActiveViewChanged()
     {
         var view = CurrentView;
-        Title = view is null ? "PAX Commander" : $"{view.Title} — PAX Commander";
+        Title = view is null ? "pxd Commander" : $"{view.Title} — pxd Commander";
         _sidebar.SetCurrent(view?.CurrentPath);
         UpdatePreviewVisibility();
     }

@@ -1,4 +1,4 @@
-namespace PaxCommander.Ops;
+namespace pxdCommander.Ops;
 
 public enum JobKind { Copy, Move, Delete, Recycle, Compress, Extract }
 

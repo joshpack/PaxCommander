@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PaxCommander.Ops;
+namespace pxdCommander.Ops;
 
 /// <summary>
 /// Creates and runs file jobs. Each job runs on the thread pool; at most <see cref="MaxConcurrentJobs"/> run at once and

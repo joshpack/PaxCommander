@@ -2,13 +2,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// Add or edit a saved Microsoft 365 admin PowerShell connection. Passwords and the sign-in code link go to Windows
-/// Credential Manager; nothing secret is written to PAX Commander's own files.
+/// Credential Manager; nothing secret is written to pxd Commander's own files.
 /// </summary>
 public static class M365Dialog
 {
@@ -131,7 +131,7 @@ public static class M365Dialog
                     Field("SIGN-IN CODE LINK", otp),
                     new TextBlock
                     {
-                        Text = "Optional: a link to wherever you get your one-time code. PAX Commander only opens the link (a button in the terminal while you sign in); it never reads or stores the codes. The link is kept in Windows Credential Manager.",
+                        Text = "Optional: a link to wherever you get your one-time code. pxd Commander only opens the link (a button in the terminal while you sign in); it never reads or stores the codes. The link is kept in Windows Credential Manager.",
                         FontSize = 11.5,
                         Foreground = Skin.Faint,
                         TextWrapping = TextWrapping.Wrap,

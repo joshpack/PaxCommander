@@ -2,12 +2,12 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
-/// A popped-out terminal ("PAX Terminal"): the main window's own title bar (the PAX mark, then what this terminal is and
+/// A popped-out terminal ("pxd Terminal"): the main window's own title bar (the pxd mark, then what this terminal is and
 /// where, then minimize / maximize / close) above the live terminal. It opens where the last one was left.
 /// </summary>
 public sealed class TerminalWindow : Window
@@ -37,7 +37,7 @@ public sealed class TerminalWindow : Window
             Spacing = 9,
             VerticalAlignment = VerticalAlignment.Center,
             Margin = new Thickness(14, 0, 14, 0),
-            Children = { AppIcon.Mark(22), new TextBlock { Text = "PAX Terminal", Classes = { "neon" }, FontWeight = FontWeight.Bold, FontSize = 14.5, VerticalAlignment = VerticalAlignment.Center } },
+            Children = { AppIcon.Mark(22), new TextBlock { Text = "pxd Terminal", Classes = { "neon" }, FontWeight = FontWeight.Bold, FontSize = 14.5, VerticalAlignment = VerticalAlignment.Center } },
         };
         var top = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,Auto,*,Auto"), Height = 48, Background = Brushes.Transparent };
         top.Children.Add(brand);
@@ -65,7 +65,7 @@ public sealed class TerminalWindow : Window
     {
         var text = $"{what.Replace("  ", " · ")} — {folder}";
         _where.Text = text;
-        Title = $"{text} — PAX Terminal";
+        Title = $"{text} — pxd Terminal";
     }
 
     /// <summary>Hands the terminal back (before docking it into a tab again).</summary>

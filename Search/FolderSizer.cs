@@ -1,6 +1,6 @@
 using System.IO.Enumeration;
 
-namespace PaxCommander.Search;
+namespace pxdCommander.Search;
 
 public static class FolderSizer
 {

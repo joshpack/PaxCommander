@@ -1,4 +1,4 @@
-namespace PaxCommander.Platform.Win32;
+namespace pxdCommander.Platform.Win32;
 
 /// <summary>Top-down 32-bit BGRA pixels, stride = Width * 4.</summary>
 public sealed record RawImage(int Width, int Height, byte[] Pixels, bool Premultiplied);

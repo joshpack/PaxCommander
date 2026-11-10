@@ -3,10 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using PaxCommander.Core;
-using PaxCommander.Views;
+using pxdCommander.Core;
+using pxdCommander.Views;
 
-namespace PaxCommander;
+namespace pxdCommander;
 
 public partial class App : Application
 {

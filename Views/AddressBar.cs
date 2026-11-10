@@ -6,10 +6,10 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PaxCommander.Core;
-using PaxCommander.Search;
+using pxdCommander.Core;
+using pxdCommander.Search;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>Lays crumbs out from the right; whatever doesn't fit collapses into the leading overflow button.</summary>
 public sealed class CrumbPanel : Panel

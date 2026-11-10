@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PaxCommander.Core;
+namespace pxdCommander.Core;
 
 public enum ViewMode { Details, Columns, Tiles }
 
@@ -38,7 +38,7 @@ public sealed class SessionSnapshot
     public int ActivePane { get; set; }
 }
 
-/// <summary>Everything the user can change, saved as JSON in %APPDATA%\PaxCommander\settings.json.</summary>
+/// <summary>Everything the user can change, saved as JSON in %APPDATA%\pxdCommander\settings.json.</summary>
 public sealed class AppSettings
 {
     public static AppSettings Current { get; private set; } = new();
@@ -77,7 +77,7 @@ public sealed class AppSettings
 
     // Behaviour
     public bool SingleClickOpen { get; set; }
-    /// <summary>Opening an image shows it in the built-in viewer (PAX Image Viewer) instead of Windows' default app.</summary>
+    /// <summary>Opening an image shows it in the built-in viewer (pxd Image Viewer) instead of Windows' default app.</summary>
     public bool OpenImagesInViewer { get; set; } = true;
     public bool ConfirmRecycle { get; set; }
     public bool RestoreSession { get; set; } = true;

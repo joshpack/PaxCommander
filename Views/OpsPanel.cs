@@ -3,11 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PaxCommander.Core;
-using PaxCommander.Core.Remote;
-using PaxCommander.Ops;
+using pxdCommander.Core;
+using pxdCommander.Core.Remote;
+using pxdCommander.Ops;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>
 /// The transfer queue along the bottom: every running copy/move/delete/zip with progress, speed, time left and

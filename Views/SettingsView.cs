@@ -2,9 +2,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using PaxCommander.Core;
+using pxdCommander.Core;
 
-namespace PaxCommander.Views;
+namespace pxdCommander.Views;
 
 /// <summary>The settings card. Every change applies immediately and is saved.</summary>
 public static class SettingsView
@@ -96,7 +96,7 @@ public static class SettingsView
                 Row("Terminal command", "{path} is replaced by the folder", terminal),
                 new TextBlock
                 {
-                    Text = $"PAX Commander {typeof(SettingsView).Assembly.GetName().Version?.ToString(3)} · settings in {AppPaths.Data}",
+                    Text = $"pxd Commander {typeof(SettingsView).Assembly.GetName().Version?.ToString(3)} · settings in {AppPaths.Data}",
                     Foreground = Skin.Faint,
                     FontSize = 11,
                     Margin = new Thickness(0, 16, 0, 0),
