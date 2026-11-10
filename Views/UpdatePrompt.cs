@@ -8,8 +8,8 @@ using pxdCommander.Core;
 namespace pxdCommander.Views;
 
 /// <summary>
-/// "A new version is out" card: shows what's new and installs only when the user clicks Update now. The automatic
-/// check runs once a day, a few seconds after start-up; "Check for updates" runs it on demand.
+/// "A new version is out" card for "Check for updates" (on demand): shows what's new and installs when the user clicks
+/// Update now. Start-up no longer prompts: a newer release installs before the app opens (Updater.BeforeStart).
 /// </summary>
 public static class UpdatePrompt
 {
@@ -18,30 +18,19 @@ public static class UpdatePrompt
     /// <summary>For tests: the last update the card offered.</summary>
     public static UpdateInfo? LastOffered { get; private set; }
 
-    public static async Task CheckOnStartAsync(Window window)
+    /// <summary>
+    /// After start-up: removes what the last update left behind. Updates themselves install before the app opens
+    /// (Updater.BeforeStart, no prompt), so nothing is offered here.
+    /// </summary>
+    public static Task CheckOnStartAsync(Window window)
     {
-        var s = AppSettings.Current;
-        // Test runs (their own data folder) never reach GitHub unless pointed at a fake.
-        if (Environment.GetEnvironmentVariable("PXDCMD_DATA") is { Length: > 0 } && Environment.GetEnvironmentVariable("PXDCMD_UPDATE_API") is not { Length: > 0 }) return;
-        _ = Task.Run(() =>
+        // Test runs (their own data folder) leave the real temp folders alone.
+        if (Environment.GetEnvironmentVariable("PXDCMD_DATA") is { Length: > 0 }) return Task.CompletedTask;
+        return Task.Run(() =>
         {
             Updater.CleanUp();
             Updater.CleanUpOldExe();
         });
-        if (!s.CheckForUpdates || DateTime.UtcNow - s.LastUpdateCheck < TimeSpan.FromHours(20)) return;
-        await Task.Delay(TimeSpan.FromSeconds(8));
-        UpdateInfo? info;
-        try
-        {
-            info = await Updater.CheckAsync();
-        }
-        catch
-        {
-            return; // Offline or GitHub unreachable: try again next start.
-        }
-        s.LastUpdateCheck = DateTime.UtcNow;
-        AppSettings.SaveSoon();
-        if (info is not null && info.Version != s.SkippedUpdate) await ShowAsync(window, info);
     }
 
     public static async Task CheckNowAsync(Window window)

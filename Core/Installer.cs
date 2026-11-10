@@ -194,11 +194,19 @@ public static class Installer
     }
 
     /// <summary>Opens the freshly installed app (after a quiet update).</summary>
-    public static void Relaunch(string exe)
+    public static void Relaunch(string exe, IReadOnlyList<string>? args = null)
     {
         try
         {
-            Process.Start(new ProcessStartInfo(exe) { UseShellExecute = true, WorkingDirectory = Path.GetDirectoryName(exe)! });
+            if (args is not { Count: > 0 })
+            {
+                Process.Start(new ProcessStartInfo(exe) { UseShellExecute = true, WorkingDirectory = Path.GetDirectoryName(exe)! });
+                return;
+            }
+            // Opened by an update that ran before the app: start it with the arguments it was first started with.
+            var psi = new ProcessStartInfo(exe) { UseShellExecute = false, WorkingDirectory = Path.GetDirectoryName(exe)! };
+            foreach (var a in args) psi.ArgumentList.Add(a);
+            Process.Start(psi)?.Dispose();
         }
         catch
         {

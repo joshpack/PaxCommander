@@ -11,6 +11,15 @@ public static class SingleInstance
 {
     private static Mutex? _mutex;
     private static string PipeName => "pxdCommander-" + Environment.UserName;
+    internal static string MutexName => @"Local\pxdCommander.Instance." + Environment.UserName;
+
+    /// <summary>Whether a copy is already open for this user (without becoming the open copy).</summary>
+    public static bool AnotherCopyRunning()
+    {
+        if (!Mutex.TryOpenExisting(MutexName, out var m)) return false;
+        m.Dispose();
+        return true;
+    }
 
     /// <summary>Raised on a background thread with the paths another launch asked for (empty = just show a window).</summary>
     public static event Action<IReadOnlyList<string>>? Received;
@@ -18,7 +27,7 @@ public static class SingleInstance
     /// <returns>True when another copy took the request and this process should exit.</returns>
     public static bool TryHandOff(IReadOnlyList<string> paths)
     {
-        _mutex = new Mutex(true, "Local\\pxdCommander.Instance." + Environment.UserName, out var first);
+        _mutex = new Mutex(true, MutexName, out var first);
         if (first)
             return false;
 

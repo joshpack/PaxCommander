@@ -31,6 +31,20 @@ internal static class Program
             return;
         }
 
+        // A quiet setup started by an update before start: what follows "--then" is what the app was started with.
+        string[] relaunchArgs = [];
+        var thenAt = Array.IndexOf(args, "--then");
+        if (thenAt >= 0)
+        {
+            relaunchArgs = args[(thenAt + 1)..];
+            args = args[..thenAt];
+        }
+
+        // Update before the app opens (no prompt): a newer release is installed and started with these same arguments.
+        // Skipped for the setup / uninstall / --write-icon / --self-test modes, copies just updated and dev builds.
+        if (Updater.BeforeStart(args))
+            return;
+
         StartupPaths = args.Where(a => !a.StartsWith("--", StringComparison.Ordinal)).ToArray();
         var dirArg = Array.IndexOf(args, "--dir");
         if (dirArg >= 0 && dirArg + 1 < args.Length) StartupPaths = StartupPaths.Where(p => p != args[dirArg + 1]).ToArray();
@@ -77,7 +91,7 @@ internal static class Program
                 try
                 {
                     var exe = Installer.InstallAsync(folder, !args.Contains("--no-desktop"), !args.Contains("--no-folder-menu"), _ => { }).GetAwaiter().GetResult();
-                    if (args.Contains("--relaunch")) Installer.Relaunch(exe);
+                    if (args.Contains("--relaunch")) Installer.Relaunch(exe, relaunchArgs);
                 }
                 catch (Exception ex)
                 {
@@ -87,7 +101,7 @@ internal static class Program
                     {
                         var installed = Path.Combine(folder, "pxdCommander.exe");
                         var former = requested is null ? null : Path.Combine(requested, Migration.FormerExeName);
-                        Installer.Relaunch(!File.Exists(installed) && former is not null && File.Exists(former) ? former : installed);
+                        Installer.Relaunch(!File.Exists(installed) && former is not null && File.Exists(former) ? former : installed, relaunchArgs);
                     }
                 }
                 return;

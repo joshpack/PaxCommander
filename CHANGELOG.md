@@ -3,6 +3,15 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `pxdCommander.csproj` for every release, and add an entry here.
 
+## 1.4.1 (2026-11-09)
+- Updates install before the app opens, with no prompt: however it's started (Start menu, folder right-click, the
+  Toolkit, a double-click), it first asks GitHub for the latest release (up to 4 s; offline or slow just opens it).
+  If there's a newer one, the installed copy updates through the release's setup, quietly and in place (keeping the
+  desktop shortcut and folder-menu choices), and a portable or Toolkit copy swaps its exe; then it opens with the
+  same arguments. Not while another window is already open, not for setup/uninstall/--self-test/--write-icon, dev
+  builds, PXD_NO_UPDATE=1 or with "Check for updates" off. The daily in-app prompt is gone; "Check for updates" in
+  the menu still works on demand.
+
 ## 1.4.0 (2026-11-09)
 - Renamed to pxd Commander (company: pxd, pxdtek.com). Exe pxdCommander.exe, settings in %APPDATA%\pxdCommander,
   installs to %LOCALAPPDATA%\Programs\pxd Commander, Start menu shortcut "pxd Commander", data override env var

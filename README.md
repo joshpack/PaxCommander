@@ -102,7 +102,7 @@ Both are self-contained: .NET does not need to be installed.
 2. Choose the folder (default `%LOCALAPPDATA%\Programs\pxd Commander`), whether you want a desktop shortcut, and whether folders should get **Open in pxd Commander** on their right-click menu.
 3. Click **Install**. No admin rights are needed: everything is installed for your user account only.
 
-It adds a Start menu shortcut and an entry in **Settings ▸ Apps ▸ Installed apps**. To update, run the newer setup; it closes pxd Commander if it's open and replaces it in place.
+It adds a Start menu shortcut and an entry in **Settings ▸ Apps ▸ Installed apps**. To update, run the newer setup; it closes pxd Commander if it's open and replaces it in place. You rarely need to: when a newer release is out, pxd Commander installs it by itself before it opens (set `PXD_NO_UPDATE=1`, or turn off "Check for updates", to stop that).
 
 The files aren't code-signed, so Windows SmartScreen may say "Windows protected your PC". Click **More info**, then **Run anyway**. You can check the download first:
 
