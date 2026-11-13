@@ -150,41 +150,71 @@ internal static class SelfTest
               !Updater.ShouldCheckBeforeStart(["--no-update"], apps) && !Updater.ShouldCheckBeforeStart([], Path.Combine(root, "pxdcomm-setup.exe")),
             "update before start: skipped for --write-icon, setup/uninstall, a just-updated copy and a setup-named file");
 
+        // Sources as the app sees them: pxdtek.com's mirror first, GitHub as the fallback. Both are local fakes here.
+        Environment.SetEnvironmentVariable("PXD_UPDATE_API", null);
+        var defaults = Updater.LatestUrls();
+        check(defaults.Length == 2 && defaults[0] == "https://pxdtek.com/gh/repos/pxdtek/pxdCommander/releases/latest" &&
+              defaults[1] == "https://api.github.com/repos/pxdtek/pxdCommander/releases/latest", "update: release info from pxdtek.com first, GitHub second");
+        check(Updater.GitHubCopy("https://pxdtek.com/dl/pxdCommander/v1.4.3/pxdcomm-setup.exe") == "https://github.com/pxdtek/pxdCommander/releases/download/v1.4.3/pxdcomm-setup.exe",
+            "update: a pxdtek.com download maps to the same file on GitHub");
+
         var setupBytes = System.Text.Encoding.ASCII.GetBytes("pretend setup " + Guid.NewGuid());
         var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(setupBytes)).ToLowerInvariant();
+        var blockPage = System.Text.Encoding.UTF8.GetBytes("<!DOCTYPE html><html><body>This site is blocked by your network.</body></html>");
         var tag = "v9.9.9";
         var badSum = false;
+        var mirror = "ok"; // ok | blocked (answers a block page) | down (errors)
+        string dlMirror = "ok", dlGitHub = "ok";
         var port = new Random().Next(41000, 49000);
         var prefix = $"http://127.0.0.1:{port}/";
         using var listener = new System.Net.HttpListener();
         listener.Prefixes.Add(prefix);
         listener.Start();
+        byte[] Release(string dl)
+        {
+            var v = tag.TrimStart('v');
+            return System.Text.Encoding.UTF8.GetBytes(
+                $"{{\"tag_name\":\"{tag}\",\"draft\":false,\"prerelease\":false,\"body\":\"## New in {v}\\n- Faster\",\"assets\":[" +
+                $"{{\"name\":\"pxdCommander-{v}-win-x64-portable.zip\",\"browser_download_url\":\"{dl}zip\",\"size\":3}}," +
+                $"{{\"name\":\"pxdCommander-{v}-win-x64-setup.exe\",\"browser_download_url\":\"{dl}setup\",\"size\":{setupBytes.Length}}}," +
+                $"{{\"name\":\"pxdCommander-{v}-win-x64-setup.exe.sha256\",\"browser_download_url\":\"{dl}sum\"}}]}}");
+        }
         var serving = Task.Run(async () =>
         {
             while (listener.IsListening)
             {
                 System.Net.HttpListenerContext ctx;
                 try { ctx = await listener.GetContextAsync(); } catch { return; }
-                var v = tag.TrimStart('v');
-                byte[] body = ctx.Request.Url!.AbsolutePath switch
+                var path = ctx.Request.Url!.AbsolutePath;
+                var sum = System.Text.Encoding.ASCII.GetBytes((badSum ? new string('0', 64) : hash) + "  pxdCommander-9.9.9-win-x64-setup.exe");
+                var html = false;
+                var status = 200;
+                byte[] body = [];
+                if (path == "/pxdtek/repos/pxdtek/pxdCommander/releases/latest")
                 {
-                    "/repos/joshpack/pxdCommander/releases/latest" => System.Text.Encoding.UTF8.GetBytes(
-                        $"{{\"tag_name\":\"{tag}\",\"draft\":false,\"prerelease\":false,\"body\":\"## New in {v}\\n- Faster\",\"assets\":[" +
-                        $"{{\"name\":\"pxdCommander-{v}-win-x64-portable.zip\",\"browser_download_url\":\"{prefix}zip\",\"size\":3}}," +
-                        $"{{\"name\":\"pxdCommander-{v}-win-x64-setup.exe\",\"browser_download_url\":\"{prefix}setup\",\"size\":{setupBytes.Length}}}," +
-                        $"{{\"name\":\"pxdCommander-{v}-win-x64-setup.exe.sha256\",\"browser_download_url\":\"{prefix}sum\"}}]}}"),
-                    "/setup" => setupBytes,
-                    "/sum" => System.Text.Encoding.ASCII.GetBytes((badSum ? new string('0', 64) : hash) + $"  pxdCommander-{v}-win-x64-setup.exe"),
-                    _ => [],
-                };
-                ctx.Response.StatusCode = body.Length == 0 ? 404 : 200;
+                    if (mirror == "down") status = 503;
+                    else if (mirror == "blocked") { body = blockPage; html = true; }
+                    else body = Release(prefix + "pxdtek/dl/");
+                }
+                else if (path == "/gh/repos/pxdtek/pxdCommander/releases/latest") body = Release(prefix + "gh/");
+                else if (path.StartsWith("/pxdtek/dl/") || path.StartsWith("/gh/"))
+                {
+                    var state = path.StartsWith("/gh/") ? dlGitHub : dlMirror;
+                    if (state == "down") status = 503;
+                    else if (state == "blocked") { body = blockPage; html = true; }
+                    else body = path.EndsWith("/setup") ? setupBytes : path.EndsWith("/sum") ? sum : [];
+                }
+                if (status == 200 && body.Length == 0) status = 404;
+                ctx.Response.StatusCode = status;
+                ctx.Response.ContentType = html ? "text/html; charset=utf-8" : "application/octet-stream";
                 try { await ctx.Response.OutputStream.WriteAsync(body); } catch { }
                 ctx.Response.Close();
             }
         });
 
-        Environment.SetEnvironmentVariable("PXD_UPDATE_API", prefix.TrimEnd('/'));
+        Environment.SetEnvironmentVariable("PXD_UPDATE_API", $"{prefix}pxdtek;{prefix}gh");
         Updater.TestDownloadFolder = Path.Combine(root, "update-download");
+        Updater.FallbackFor = url => url.Contains("/pxdtek/dl/") ? url.Replace("/pxdtek/dl/", "/gh/") : null;
         try
         {
             check(Updater.ShouldCheckBeforeStart(["C:\\Some folder"], apps), "update before start: an installed / Toolkit copy checks (fake release)");
@@ -197,16 +227,51 @@ internal static class SelfTest
             File.Delete(AppPaths.File("settings.json"));
 
             var info = Updater.CheckAsync().GetAwaiter().GetResult();
-            check(info is { Version: "9.9.9" } && info.SetupUrl.EndsWith("/setup"), "update: newer release found, setup asset picked (not the portable zip)");
+            check(info is { Version: "9.9.9" } && info.SetupUrl == prefix + "pxdtek/dl/setup", "update: release info from the first source (pxdtek.com), setup asset picked (not the portable zip)");
 
             badSum = true;
             var refused = false;
             try { Updater.DownloadAsync(info!, null, CancellationToken.None).GetAwaiter().GetResult(); }
             catch (InvalidDataException) { refused = true; }
-            check(refused && !Directory.EnumerateFiles(Updater.DownloadFolder, "*.exe").Any(), "update: a bad checksum is refused and nothing is kept");
+            check(refused && !Directory.EnumerateFiles(Updater.DownloadFolder).Any(), "update: a bad checksum is refused (both sources) and nothing is kept");
             badSum = false;
             var setup = Updater.DownloadAsync(info!, null, CancellationToken.None).GetAwaiter().GetResult();
-            check(File.ReadAllBytes(setup).SequenceEqual(setupBytes) && Path.GetFileName(setup).Contains("setup"), "update: setup downloaded and verified");
+            check(File.ReadAllBytes(setup).SequenceEqual(setupBytes) && Path.GetFileName(setup).Contains("setup"), "update: setup downloaded from pxdtek.com and verified");
+            File.Delete(setup);
+
+            mirror = "blocked";
+            var viaGitHub = Updater.CheckAsync().GetAwaiter().GetResult();
+            check(viaGitHub is { Version: "9.9.9" } && viaGitHub.SetupUrl == prefix + "gh/setup", "update: pxdtek.com answers a block page, so GitHub's release info is used");
+            mirror = "down";
+            viaGitHub = Updater.CheckAsync().GetAwaiter().GetResult();
+            check(viaGitHub is { Version: "9.9.9" } && viaGitHub.SetupUrl == prefix + "gh/setup", "update: pxdtek.com fails, so GitHub's release info is used");
+            mirror = "ok";
+
+            dlMirror = "blocked";
+            setup = Updater.DownloadAsync(info!, null, CancellationToken.None).GetAwaiter().GetResult();
+            check(File.ReadAllBytes(setup).SequenceEqual(setupBytes), "update: setup and checksum come back as a block page from pxdtek.com, so the GitHub copy is downloaded and verified");
+            File.Delete(setup);
+            dlMirror = "down";
+            setup = Updater.DownloadAsync(info!, null, CancellationToken.None).GetAwaiter().GetResult();
+            check(File.ReadAllBytes(setup).SequenceEqual(setupBytes), "update: the pxdtek.com download fails, so the GitHub copy is downloaded and verified");
+            File.Delete(setup);
+
+            dlMirror = dlGitHub = "blocked";
+            var blocked = false;
+            try { Updater.DownloadAsync(info!, null, CancellationToken.None).GetAwaiter().GetResult(); }
+            catch (InvalidDataException) { blocked = true; }
+            check(blocked && !Directory.EnumerateFiles(Updater.DownloadFolder).Any(), "update: a block page is never saved or run as the setup");
+            dlMirror = dlGitHub = "ok";
+
+            Environment.SetEnvironmentVariable("PXD_UPDATE_API", $"{prefix}pxdtek");
+            mirror = "blocked";
+            bool noInfo;
+            try { noInfo = Updater.CheckAsync().GetAwaiter().GetResult() is null; }
+            catch { noInfo = true; }
+            check(noInfo, "update: a block page is never read as release info");
+            mirror = "ok";
+            Environment.SetEnvironmentVariable("PXD_UPDATE_API", $"{prefix}pxdtek;{prefix}gh");
+            setup = Updater.DownloadAsync(info!, null, CancellationToken.None).GetAwaiter().GetResult();
 
             tag = "v" + Installer.Version;
             check(Updater.CheckAsync().GetAwaiter().GetResult() is null, "update: the current version is left alone");
@@ -233,6 +298,7 @@ internal static class SelfTest
             Environment.SetEnvironmentVariable("PXD_UPDATE_API", null);
             Environment.SetEnvironmentVariable("PXD_NO_UPDATE", null);
             Updater.TestDownloadFolder = null;
+            Updater.FallbackFor = Updater.GitHubCopy;
             listener.Stop();
             serving.Wait(2000);
         }

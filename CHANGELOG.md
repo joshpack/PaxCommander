@@ -3,6 +3,27 @@
 Internal log of what each version added. Not shown in the app yet.
 Bump `<Version>` in `pxdCommander.csproj` for every release, and add an entry here.
 
+## 1.4.3 (2026-11-13)
+- Updates come from pxdtek.com: release info from pxdtek.com/gh/repos/pxdtek/pxdCommander/releases/latest, the setup
+  and its checksum from pxdtek.com/dl/…. GitHub (now github.com/pxdtek/pxdCommander) is only the fallback when
+  pxdtek.com fails, takes over 4 s or answers with a web page (a filter's block page), for the info, the setup and
+  the checksum alike. A block page is never read, saved or run; the setup still has to match the release's SHA-256.
+
+## 1.4.2 (2026-11-13)
+- "Show folder sizes" switch where you look for it: at the top of each pane's ⋯ menu and on a right-click of the
+  column titles. Ticking it in a network folder turns sizes on for all drives (network included); in a local folder,
+  for local drives. Unticking turns them off and clears the sizes from every open tab. The ⋯ menu's "Folder sizes
+  on…" submenu still picks No drives / Local drives / All drives, and the header menu has "Calculate folder sizes
+  now" for a one-off count with the switch off. Every open tab follows any change, including from Settings.
+- A server's share list (\\nas) gets folder sizes too with "All drives" on: each share is added up like any folder
+  (it used to count as a list like This PC, so it never showed sizes). Switching sizes off mid-count no longer puts
+  a finished number back afterwards.
+- Folder sizes are remembered between runs (folder-sizes.tsv in the data folder, newest 20,000 folders). A folder
+  counted before shows its last total the moment it appears, faded, while a fresh count runs quietly and replaces it
+  (no "…" or shrinking numbers meanwhile). Totals younger than 5 minutes (30 on network drives) aren't recounted at
+  all. A change inside a folder keeps its last total on screen until the recount ends; "Calculate folder sizes now"
+  rechecks the subfolders too.
+
 ## 1.4.1 (2026-11-09)
 - Updates install before the app opens, with no prompt: however it's started (Start menu, folder right-click, the
   Toolkit, a double-click), it first asks GitHub for the latest release (up to 4 s; offline or slow just opens it).
@@ -15,7 +36,7 @@ Bump `<Version>` in `pxdCommander.csproj` for every release, and add an entry he
 ## 1.4.0 (2026-11-09)
 - Renamed to pxd Commander (company: pxd, pxdtek.com). Exe pxdCommander.exe, settings in %APPDATA%\pxdCommander,
   installs to %LOCALAPPDATA%\Programs\pxd Commander, Start menu shortcut "pxd Commander", data override env var
-  PXDCMD_DATA, repo github.com/joshpack/pxdCommander, release assets pxdCommander-<v>-win-x64-setup.exe /
+  PXDCMD_DATA, repo github.com/pxdtek/pxdCommander, release assets pxdCommander-<v>-win-x64-setup.exe /
   -portable.zip and pxdcomm-setup.exe. New "pxd_" app icon.
 - One-time migration from the earlier name, safe to repeat: the settings folder moves on first start; saved
   connection and Microsoft 365 passwords move in Credential Manager the first time they're used; installing (or a
@@ -32,7 +53,7 @@ Bump `<Version>` in `pxdCommander.csproj` for every release, and add an entry he
   the swap fails. pxd Toolkit 1.1.5 reads the updated exe's version, so it doesn't offer the same update again.
 
 ## 1.3.9 (2026-11-07)
-- Built-in image viewer (pxd Image Viewer, also a standalone app at github.com/joshpack/pxdImageViewer): opening
+- Built-in image viewer (pxd Image Viewer, also a standalone app at github.com/pxdtek/pxdImageViewer): opening
   an image shows it in its own window with deep, high-quality zoom (to 51,200%, crisp pixels and a pixel grid when far
   in), stepping through the tab's images in its sort order (several selected: just those), and slideshows with
   adjustable speed, shuffle, cross-fade and an option to keep the zoom between images. The tab selects whichever image

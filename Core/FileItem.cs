@@ -139,6 +139,13 @@ public sealed class FileItem : ObservableObject
     /// <summary>True while <see cref="FolderBytes"/> is still being added up.</summary>
     public bool FolderSizePartial { get => _folderSizePartial; set => Set(ref _folderSizePartial, value); }
 
+    private bool _sizeIsStale;
+    /// <summary>
+    /// <see cref="FolderBytes"/> is the total remembered from an earlier count, shown at once (faded) while a fresh
+    /// count runs quietly in the background.
+    /// </summary>
+    public bool SizeIsStale { get => _sizeIsStale; set => Set(ref _sizeIsStale, value); }
+
     private double _sizeRatio;
     /// <summary>Share of the largest item in the listing (0..1), drawn as a bar in the size column.</summary>
     public double SizeRatio { get => _sizeRatio; set => Set(ref _sizeRatio, value); }

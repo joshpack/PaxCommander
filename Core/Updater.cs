@@ -6,27 +6,54 @@ using System.Text.RegularExpressions;
 
 namespace pxdCommander.Core;
 
-/// <summary>A newer release found on GitHub.</summary>
+/// <summary>A newer release (from pxdtek.com, or GitHub as the fallback).</summary>
 public sealed record UpdateInfo(string Version, string Notes, string SetupUrl, string ShaUrl, string PageUrl, long Size);
 
 /// <summary>
-/// Checks the public GitHub releases for a newer version, downloads its installer, checks it against the release's
+/// Checks the latest release (pxdtek.com first, GitHub as the fallback) for a newer version, downloads its installer, checks it against the release's
 /// .sha256 file and runs it. Since 1.4.1 this happens before the app opens (<see cref="BeforeStart"/>, no prompt);
-/// "Check for updates" still runs it on demand. The check only reads GitHub's release list (no account, nothing about
+/// "Check for updates" still runs it on demand. The check only reads the release list (no account, nothing about
 /// the PC is sent beyond a generic user agent).
 /// </summary>
 public static partial class Updater
 {
-    public const string Repo = "joshpack/pxdCommander";
+    public const string Repo = "pxdtek/pxdCommander";
 
     /// <summary>
-    /// Release API address. PXDCMD_UPDATE_API (the full "latest release" URL) or PXD_UPDATE_API (an API root, as for the
-    /// other pxd apps) point tests at a local fake.
+    /// Where the latest release is asked for, in order: pxdtek.com (it fetches from GitHub on its side, so the app only
+    /// talks to pxdtek.com), then GitHub itself for networks that block pxdtek.com. PXDCMD_UPDATE_API (one full "latest
+    /// release" URL) or PXD_UPDATE_API (API roots, ';'-separated, tried in order) point tests at local fakes.
     /// </summary>
-    private static string LatestUrl =>
-        Environment.GetEnvironmentVariable("PXDCMD_UPDATE_API") is { Length: > 0 } u ? u
-        : Environment.GetEnvironmentVariable("PXD_UPDATE_API") is { Length: > 0 } api ? $"{api.TrimEnd('/')}/repos/{Repo}/releases/latest"
-        : $"https://api.github.com/repos/{Repo}/releases/latest";
+    public static string[] LatestUrls()
+    {
+        if (Environment.GetEnvironmentVariable("PXDCMD_UPDATE_API") is { Length: > 0 } u) return [u];
+        var roots = Environment.GetEnvironmentVariable("PXD_UPDATE_API") is { Length: > 0 } api
+            ? api.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            : ["https://pxdtek.com/gh", "https://api.github.com"];
+        return roots.Select(r => $"{r.TrimEnd('/')}/repos/{Repo}/releases/latest").ToArray();
+    }
+
+    /// <summary>pxdtek.com's copy of a release download → the same file on GitHub (the fallback).</summary>
+    public static string? GitHubCopy(string url)
+    {
+        var m = Regex.Match(url, @"^https://pxdtek\.com/dl/([^/]+)/([^/]+)/([^/]+)$");
+        return m.Success ? $"https://github.com/pxdtek/{m.Groups[1].Value}/releases/download/{m.Groups[2].Value}/{m.Groups[3].Value}" : null;
+    }
+
+    /// <summary>Where a download is tried next when its first source fails. The self-test points it at a second fake.</summary>
+    internal static Func<string, string?> FallbackFor { get; set; } = GitHubCopy;
+
+    /// <summary>
+    /// A web filter's block page (or any HTML) where JSON, a checksum or a setup file was expected. Never parsed, saved
+    /// or run as if it were the real thing.
+    /// </summary>
+    private static bool IsHtml(HttpResponseMessage r, ReadOnlySpan<byte> start)
+    {
+        if (r.Content.Headers.ContentType?.MediaType is { } t && t.Contains("html", StringComparison.OrdinalIgnoreCase)) return true;
+        var i = 0;
+        while (i < start.Length && start[i] is (byte)' ' or (byte)'\t' or (byte)'\r' or (byte)'\n' or 0xEF or 0xBB or 0xBF) i++;
+        return i < start.Length && start[i] == (byte)'<';
+    }
 
     private static bool FakeApi =>
         Environment.GetEnvironmentVariable("PXDCMD_UPDATE_API") is { Length: > 0 } || Environment.GetEnvironmentVariable("PXD_UPDATE_API") is { Length: > 0 };
@@ -37,7 +64,7 @@ public static partial class Updater
     /// First thing in Main: when a newer release is out, installs it before the app opens (no prompt) and starts the new
     /// copy with the same arguments. True when this process should now exit. The installed copy updates through the
     /// release's setup (quietly, in place, keeping its shortcut and folder-menu choices); a portable or Toolkit copy swaps
-    /// its exe for the new single file. Never throws: offline, GitHub slower than 4 s or any failure just opens this copy.
+    /// its exe for the new single file. Never throws: offline, no source answering within 4 s or any failure just opens this copy.
     /// </summary>
     public static bool BeforeStart(string[] args)
     {
@@ -47,7 +74,8 @@ public static partial class Updater
             // Another copy is open: this launch only hands its paths over. The open copy updates on its next start.
             if (SingleInstance.AnotherCopyRunning()) return false;
             UpdateInfo? info;
-            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(4)))
+            // 4 s per source (pxdtek.com, then GitHub).
+            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(9)))
                 info = CheckAsync(cts.Token).GetAwaiter().GetResult();
             if (info is null) return false;
             var setup = DownloadAsync(info, null, CancellationToken.None).GetAwaiter().GetResult();
@@ -161,10 +189,7 @@ public static partial class Updater
     /// <summary>The latest release if it's newer than this copy, else null. Throws on network trouble.</summary>
     public static async Task<UpdateInfo?> CheckAsync(CancellationToken ct = default)
     {
-        using var response = await Http.Value.GetAsync(LatestUrl, ct);
-        response.EnsureSuccessStatusCode();
-        await using var stream = await response.Content.ReadAsStreamAsync(ct);
-        using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
+        using var doc = await LatestReleaseAsync(ct);
         var root = doc.RootElement;
         if (root.TryGetProperty("draft", out var d) && d.GetBoolean()) return null;
         if (root.TryGetProperty("prerelease", out var p) && p.GetBoolean()) return null;
@@ -190,6 +215,59 @@ public static partial class Updater
         return new UpdateInfo(version, NotesFrom(root.TryGetProperty("body", out var b) ? b.GetString() ?? "" : ""), setup, sha, page, size);
     }
 
+    /// <summary>
+    /// The latest release's JSON from the first source that answers with it (each gets 4 s). A source that fails, times
+    /// out or answers with HTML is skipped. Throws when none answers.
+    /// </summary>
+    private static async Task<JsonDocument> LatestReleaseAsync(CancellationToken ct)
+    {
+        Exception? last = null;
+        foreach (var url in LatestUrls())
+        {
+            using var each = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            each.CancelAfter(TimeSpan.FromSeconds(4));
+            try
+            {
+                using var response = await Http.Value.GetAsync(url, each.Token);
+                response.EnsureSuccessStatusCode();
+                var bytes = await response.Content.ReadAsByteArrayAsync(each.Token);
+                if (IsHtml(response, bytes)) throw new InvalidDataException("Got a web page instead of release info.");
+                var doc = JsonDocument.Parse(bytes);
+                if (doc.RootElement.ValueKind == JsonValueKind.Object && doc.RootElement.TryGetProperty("tag_name", out _)) return doc;
+                doc.Dispose();
+                throw new InvalidDataException("Not release info.");
+            }
+            catch (Exception ex) when (!ct.IsCancellationRequested)
+            {
+                last = ex; // blocked, offline, slow or not JSON: try the next source
+            }
+        }
+        throw last ?? new HttpRequestException("No update source answered.");
+    }
+
+    /// <summary>The release's checksum file: from its own address, else the GitHub copy. Block pages don't count.</summary>
+    private static async Task<string> ChecksumAsync(string url, CancellationToken ct)
+    {
+        foreach (var u in new[] { url, FallbackFor(url) })
+        {
+            if (u is null) continue;
+            try
+            {
+                using var response = await Http.Value.GetAsync(u, ct);
+                response.EnsureSuccessStatusCode();
+                var bytes = await response.Content.ReadAsByteArrayAsync(ct);
+                if (IsHtml(response, bytes)) continue;
+                var hash = Regex.Match(System.Text.Encoding.ASCII.GetString(bytes), "^\\s*([0-9a-fA-F]{64})\\b");
+                if (hash.Success) return hash.Groups[1].Value.ToLowerInvariant();
+            }
+            catch when (!ct.IsCancellationRequested)
+            {
+                // try the GitHub copy
+            }
+        }
+        throw new InvalidDataException("The release's checksum file is not readable.");
+    }
+
     [GeneratedRegex(@"^pxdCommander-[\d.]+-win-x64-setup\.exe$", RegexOptions.IgnoreCase)]
     internal static partial Regex SetupName();
 
@@ -208,43 +286,63 @@ public static partial class Updater
         return text.Length > 900 ? text[..900].TrimEnd() + "…" : text;
     }
 
-    /// <summary>Downloads the installer and checks its SHA-256 against the release's checksum file.</summary>
+    /// <summary>
+    /// Downloads the installer (from pxdtek.com, else the same file on GitHub) and checks its SHA-256 against the
+    /// release's checksum file. A source that fails, answers with HTML or sends something that doesn't match the checksum
+    /// is thrown away and the next one is tried; nothing unchecked is ever kept or run.
+    /// </summary>
     public static async Task<string> DownloadAsync(UpdateInfo info, IProgress<double>? progress, CancellationToken ct)
     {
-        var expected = (await Http.Value.GetStringAsync(info.ShaUrl, ct)).Trim().Split(' ', '\t', '\n')[0].Trim().ToLowerInvariant();
-        if (expected.Length != 64) throw new InvalidDataException("The release's checksum file is not readable.");
+        var expected = await ChecksumAsync(info.ShaUrl, ct);
 
         Directory.CreateDirectory(DownloadFolder);
         // The name must contain "setup" so the downloaded copy runs as the installer.
         var target = Path.Combine(DownloadFolder, $"pxdcomm-setup-{info.Version}.exe");
         var partial = target + ".part";
-        using (var response = await Http.Value.GetAsync(info.SetupUrl, HttpCompletionOption.ResponseHeadersRead, ct))
+        Exception? last = null;
+        foreach (var url in new[] { info.SetupUrl, FallbackFor(info.SetupUrl) })
         {
-            response.EnsureSuccessStatusCode();
-            var total = response.Content.Headers.ContentLength ?? info.Size;
-            await using var src = await response.Content.ReadAsStreamAsync(ct);
-            await using var dst = File.Create(partial);
-            var buffer = new byte[81920];
-            long done = 0;
-            int read;
-            while ((read = await src.ReadAsync(buffer, ct)) > 0)
+            if (url is null) continue;
+            try
             {
-                await dst.WriteAsync(buffer.AsMemory(0, read), ct);
-                done += read;
-                if (total > 0) progress?.Report((double)done / total);
+                await DownloadFileAsync(url, partial, info.Size, progress, ct);
+                string actual;
+                await using (var fs = File.OpenRead(partial))
+                    actual = Convert.ToHexString(await SHA256.HashDataAsync(fs, ct)).ToLowerInvariant();
+                if (actual != expected)
+                    throw new InvalidDataException("The download doesn't match the release's checksum, so it was thrown away.");
+                File.Move(partial, target, overwrite: true);
+                return target;
+            }
+            catch (Exception ex) when (!ct.IsCancellationRequested)
+            {
+                TryDelete(partial);
+                last = ex;
             }
         }
+        throw last ?? new HttpRequestException("The update couldn't be downloaded.");
+    }
 
-        string actual;
-        await using (var fs = File.OpenRead(partial))
-            actual = Convert.ToHexString(await SHA256.HashDataAsync(fs, ct)).ToLowerInvariant();
-        if (actual != expected)
+    private static async Task DownloadFileAsync(string url, string path, long size, IProgress<double>? progress, CancellationToken ct)
+    {
+        using var response = await Http.Value.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+        response.EnsureSuccessStatusCode();
+        var total = response.Content.Headers.ContentLength ?? size;
+        await using var src = await response.Content.ReadAsStreamAsync(ct);
+        await using var dst = File.Create(path);
+        var buffer = new byte[81920];
+        long done = 0;
+        int read;
+        var first = true;
+        while ((read = await src.ReadAsync(buffer, ct)) > 0)
         {
-            TryDelete(partial);
-            throw new InvalidDataException("The download doesn't match the release's checksum, so it was thrown away.");
+            if (first && IsHtml(response, buffer.AsSpan(0, read)))
+                throw new InvalidDataException("Got a web page instead of the setup file.");
+            first = false;
+            await dst.WriteAsync(buffer.AsMemory(0, read), ct);
+            done += read;
+            if (total > 0) progress?.Report((double)done / total);
         }
-        File.Move(partial, target, overwrite: true);
-        return target;
     }
 
     /// <summary>

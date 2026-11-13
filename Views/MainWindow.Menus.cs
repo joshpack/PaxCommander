@@ -335,6 +335,7 @@ public sealed partial class MainWindow
         menu.Items.Add(Sep());
         menu.Items.Add(Check("Hidden files", s.ShowHidden, "Ctrl+H", v => { s.ShowHidden = v; ApplySettings(); }));
         menu.Items.Add(Check("Protected system files", s.ShowSystemFiles, null, v => { s.ShowSystemFiles = v; ApplySettings(); }));
+        menu.Items.Add(Check("Show folder sizes", view.FolderSizesShown, null, view.SetFolderSizesShown));
         menu.Items.Add(Check("Size bars", s.ShowSizeBars, null, v => { s.ShowSizeBars = v; ApplySettings(); }));
         menu.Items.Add(Check("Compact rows", s.CompactRows, null, v => { s.CompactRows = v; ApplySettings(); }));
         var preview = Sub("Preview pane", "preview");
@@ -350,14 +351,14 @@ public sealed partial class MainWindow
             preview.Items.Add(mi);
         }
         menu.Items.Add(preview);
-        var sizes = Sub("Folder sizes", "sigma");
-        foreach (var (title, mode) in new[] { ("Off", FolderSizeMode.Off), ("Local drives", FolderSizeMode.LocalDrives), ("Everywhere", FolderSizeMode.Everywhere) })
+        var sizes = Sub("Folder sizes on…", "sigma");
+        foreach (var (title, mode) in new[] { ("No drives (off)", FolderSizeMode.Off), ("Local drives", FolderSizeMode.LocalDrives), ("All drives, incl. network", FolderSizeMode.Everywhere) })
         {
             var mi = Item(title, null, () =>
             {
                 s.FolderSizes = mode;
                 AppSettings.SaveSoon();
-                if (FolderSizes.ShouldAutoMeasure(view.CurrentPath)) view.MeasureSizes();
+                RefreshAllFolderSizes();
             });
             mi.ToggleType = MenuItemToggleType.Radio;
             mi.IsChecked = s.FolderSizes == mode;

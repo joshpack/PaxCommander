@@ -4,14 +4,14 @@ A fast two-pane file manager for Windows, built to replace File Explorer: tabs, 
 
 ![pxd Commander with two panes: a project folder with Git status on the left, photo thumbnails on the right](docs/screenshots/dual-pane.png)
 
-**[Download the latest version](https://github.com/joshpack/pxdCommander/releases/latest)** for Windows 10/11 (64-bit). No admin rights or .NET install needed.
+**[Download the latest version](https://github.com/pxdtek/pxdCommander/releases/latest)** for Windows 10/11 (64-bit). No admin rights or .NET install needed.
 
 ## Features
 
 ### Browsing
 - **Two panes, each with tabs.** Side by side or stacked. Your tabs and folders come back when you restart.
 - **Three views:** details list, thumbnails, and Miller columns.
-- **Built-in image viewer** with deep, high-quality zoom and folder slideshows that can keep your zoom level ([pxd Image Viewer](https://github.com/joshpack/pxdImageViewer), also available on its own).
+- **Built-in image viewer** with deep, high-quality zoom and folder slideshows that can keep your zoom level ([pxd Image Viewer](https://github.com/pxdtek/pxdImageViewer), also available on its own).
 - **Preview pane and Quick Look** (Space) for pictures, video, audio, PDF and Office files, archives, text and code. Code is colored by language, with line numbers; minified JSON and XML are laid out.
 - **Address bar** with breadcrumbs you can click or type into, with folder autocomplete.
 - **Sidebar** with favorites, drives (as a list or compact tiles), saved connections, network, frequent folders and color labels.
@@ -85,7 +85,7 @@ The Windows-only parts are: shell icons and thumbnails, the native right-click m
 
 ## Install
 
-Downloads are on the [latest release](https://github.com/joshpack/pxdCommander/releases/latest) page:
+Downloads are on the [latest release](https://github.com/pxdtek/pxdCommander/releases/latest) page:
 
 | File | What it is |
 | --- | --- |
@@ -102,7 +102,7 @@ Both are self-contained: .NET does not need to be installed.
 2. Choose the folder (default `%LOCALAPPDATA%\Programs\pxd Commander`), whether you want a desktop shortcut, and whether folders should get **Open in pxd Commander** on their right-click menu.
 3. Click **Install**. No admin rights are needed: everything is installed for your user account only.
 
-It adds a Start menu shortcut and an entry in **Settings ▸ Apps ▸ Installed apps**. To update, run the newer setup; it closes pxd Commander if it's open and replaces it in place. You rarely need to: when a newer release is out, pxd Commander installs it by itself before it opens (set `PXD_NO_UPDATE=1`, or turn off "Check for updates", to stop that).
+It adds a Start menu shortcut and an entry in **Settings ▸ Apps ▸ Installed apps**. To update, run the newer setup; it closes pxd Commander if it's open and replaces it in place. You rarely need to: when a newer release is out, pxd Commander installs it by itself before it opens (it asks pxdtek.com, or GitHub when pxdtek.com is blocked; set `PXD_NO_UPDATE=1`, or turn off "Check for updates", to stop that).
 
 The files aren't code-signed, so Windows SmartScreen may say "Windows protected your PC". Click **More info**, then **Run anyway**. You can check the download first:
 
@@ -152,8 +152,8 @@ There are no downloads. If you want to experiment, [build from source](#build-fr
 Needs the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
 ```powershell
-git clone https://github.com/joshpack/pxdImageViewer.git   # the image viewer, referenced from next door
-git clone https://github.com/joshpack/pxdCommander.git
+git clone https://github.com/pxdtek/pxdImageViewer.git   # the image viewer, referenced from next door
+git clone https://github.com/pxdtek/pxdCommander.git
 cd pxdCommander
 dotnet run -c Release
 ```

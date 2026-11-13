@@ -594,12 +594,52 @@ public sealed class FolderView : UserControl, IItemViewHost
         if (rename) ActiveView?.BeginRename(hit);
     }
 
+    /// <summary>Raised when "Show folder sizes" is switched, so every open tab follows.</summary>
+    public static event Action? FolderSizesSwitched;
+
+    /// <summary>Whether this tab's folders get their sizes added up (the "Show folder sizes" tick).</summary>
+    public bool FolderSizesShown => FolderSizes.ShouldAutoMeasure(CurrentPath);
+
+    /// <summary>
+    /// The quick switch: on = sizes here too (network drives included when this is one), off = no folder sizes anywhere.
+    /// </summary>
+    public void SetFolderSizesShown(bool on)
+    {
+        var s = AppSettings.Current;
+        s.FolderSizes = !on ? FolderSizeMode.Off
+            : s.FolderSizes == FolderSizeMode.Off && PathUtil.IsLocalFixed(CurrentPath) ? FolderSizeMode.LocalDrives
+            : FolderSizeMode.Everywhere;
+        AppSettings.SaveSoon();
+        FolderSizesSwitched?.Invoke();
+    }
+
+    /// <summary>Measures or clears this tab's folder sizes to match the setting.</summary>
+    public void RefreshFolderSizes()
+    {
+        if (_listing is null || IsSearch) return;
+        if (FolderSizes.ShouldAutoMeasure(CurrentPath))
+        {
+            MeasureSizes();
+            return;
+        }
+        _sizeCts?.Cancel();
+        foreach (var item in _listing.Items)
+        {
+            if (item.Kind != ItemKind.Folder) continue;
+            item.FolderBytes = -1;
+            item.FolderSizePartial = false;
+            item.SizeIsStale = false;
+        }
+        _listing.SizesChanged();
+        InvalidateRows();
+    }
+
     public void MeasureSizes(bool force = false)
     {
-        if (_listing is null || _listing.IsVirtual || IsSearch) return;
+        if (_listing is null || (_listing.IsVirtual && !PathUtil.IsServer(CurrentPath)) || IsSearch) return;
         _sizeCts?.Cancel();
         _sizeCts = new CancellationTokenSource();
-        if (force) FolderSizes.Invalidate(CurrentPath);
+        if (force) FolderSizes.Invalidate(CurrentPath, includeInside: true);
         FolderSizes.MeasureAll(_listing, _sizeCts.Token);
     }
 

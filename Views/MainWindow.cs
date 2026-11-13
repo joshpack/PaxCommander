@@ -213,6 +213,8 @@ public sealed partial class MainWindow : Window, IAppHost
         Activated += (_, _) => _activePane.Current?.InvalidateRows();
         AccentTheme.Changed += OnAccentChanged;
         Closed += (_, _) => AccentTheme.Changed -= OnAccentChanged;
+        FolderView.FolderSizesSwitched += RefreshAllFolderSizes;
+        Closed += (_, _) => FolderView.FolderSizesSwitched -= RefreshAllFolderSizes;
     }
 
     private static Border Kbd(string text, Dock dock)
@@ -376,8 +378,16 @@ public sealed partial class MainWindow : Window, IAppHost
     private void ApplySettings()
     {
         foreach (var p in _panes) p.ApplySettings();
+        RefreshAllFolderSizes();
         _sidebar.Rebuild();
         _preview.Reload();
+    }
+
+    /// <summary>Every open tab measures or clears its folder sizes to match the setting.</summary>
+    private void RefreshAllFolderSizes()
+    {
+        foreach (var p in _panes)
+            foreach (var t in p.Tabs) t.RefreshFolderSizes();
     }
 
     // ---- Panes and activation ------------------------------------------------------------------------------------------

@@ -49,6 +49,7 @@ public partial class App : Application
             {
                 Frecency.Save();
                 AppSettings.SaveNow();
+                FolderSizes.SaveNow();
             };
             SingleInstance.Received += paths => Dispatcher.UIThread.Post(() => OnHandOff(paths));
             SingleInstance.StartServer();

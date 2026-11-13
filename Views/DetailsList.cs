@@ -359,7 +359,8 @@ public sealed class DetailsRow : Control
             ItemKind.Drive => Formatting.DriveSpace(item),
             _ => item.FolderBytes >= 0 ? Formatting.Size(item.FolderBytes) + (item.FolderSizePartial ? "…" : "") : item.FolderSizePartial ? "…" : "",
         };
-        _size = Skin.Text1(sizeText, 12, item.Kind == ItemKind.Folder ? Skin.Muted : Skin.Text, L.SizeWidth - 14, align: TextAlignment.Right);
+        // A remembered folder total being rechecked is drawn faded.
+        _size = Skin.Text1(sizeText, 12, item.Kind == ItemKind.Folder ? (item.SizeIsStale ? Skin.Faint : Skin.Muted) : Skin.Text, L.SizeWidth - 14, align: TextAlignment.Right);
     }
 
     public override void Render(DrawingContext ctx)
@@ -443,7 +444,7 @@ public sealed class DetailsRow : Control
             ctx.FillRectangle(Skin.Track, new Rect(sx + 6, y, barW, 2.5), 1.25f);
             var fill = item.IsDrive
                 ? Skin.DriveBar(item)
-                : item.FolderSizePartial ? Skin.SizeBarPartial : Skin.SizeBar;
+                : item.FolderSizePartial || item.SizeIsStale ? Skin.SizeBarPartial : Skin.SizeBar;
             ctx.FillRectangle(fill, new Rect(sx + 6, y, Math.Max(2, barW * Math.Min(1, item.SizeRatio)), 2.5), 1.25f);
         }
         if (_size is not null)
@@ -577,6 +578,21 @@ public sealed class DetailsHeader : Control
         var col = Columns().FirstOrDefault(c => x >= c.X && x < c.X + c.W);
         if (col.Key is { } key && e.InitialPressMouseButton == MouseButton.Left)
             _owner.RequestSort(key);
+        else if (e.InitialPressMouseButton == MouseButton.Right && this.FindAncestorOfType<FolderView>() is { } view)
+            HeaderMenu(view).Open(this);
+    }
+
+    /// <summary>Right-click on the column titles: the folder-size switch, where it's easy to find.</summary>
+    public static ContextMenu HeaderMenu(FolderView view)
+    {
+        var menu = new ContextMenu { Placement = PlacementMode.Pointer };
+        var show = new MenuItem { Header = "Show folder sizes", ToggleType = MenuItemToggleType.CheckBox, IsChecked = view.FolderSizesShown };
+        show.Click += (_, _) => view.SetFolderSizesShown(!view.FolderSizesShown);
+        var now = new MenuItem { Header = "Calculate folder sizes now", IsEnabled = !view.FolderSizesShown };
+        now.Click += (_, _) => view.MeasureSizes(force: true);
+        menu.Items.Add(show);
+        menu.Items.Add(now);
+        return menu;
     }
 
     protected override Size MeasureOverride(Size availableSize) => new(0, 28);
